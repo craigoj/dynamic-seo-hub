@@ -4,9 +4,50 @@ import { supabase } from "@/integrations/supabase/client";
 import { ContactSection } from "@/components/ContactSection";
 import { useToast } from "@/components/ui/use-toast";
 
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface ServiceContent {
+  meta_title: string;
+  meta_description: string;
+  content: string;
+  features?: string[];
+  benefits?: string[];
+  faqs?: FAQ[];
+  schema_markup?: any;
+}
+
+interface SchemaData {
+  "@context": string;
+  "@type": string;
+  name: string;
+  description: string;
+  provider: {
+    "@type": string;
+    name: string;
+    description: string;
+  };
+  areaServed: string;
+  serviceType: string;
+  offers: {
+    "@type": string;
+    availability: string;
+  };
+  mainEntity?: Array<{
+    "@type": string;
+    name: string;
+    acceptedAnswer: {
+      "@type": string;
+      text: string;
+    };
+  }>;
+}
+
 export default function Service() {
   const { service, city } = useParams();
-  const [content, setContent] = useState<any>(null);
+  const [content, setContent] = useState<ServiceContent | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -96,7 +137,7 @@ export default function Service() {
 
       const schemaScript = document.createElement('script');
       schemaScript.type = 'application/ld+json';
-      const schemaData = {
+      const schemaData: SchemaData = {
         "@context": "https://schema.org",
         "@type": "Service",
         "name": `${service} Services${city ? ` in ${city}` : ''}`,
@@ -115,7 +156,7 @@ export default function Service() {
       };
 
       if (content.faqs) {
-        schemaData.mainEntity = content.faqs.map((faq: any) => ({
+        schemaData.mainEntity = content.faqs.map((faq) => ({
           "@type": "Question",
           "name": faq.question,
           "acceptedAnswer": {
