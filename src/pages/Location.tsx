@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { ContactSection } from "@/components/ContactSection";
 import { LocationLinks } from "@/components/LocationLinks";
 import type { Database } from "@/integrations/supabase/types";
+import { toast } from "sonner";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -18,40 +19,76 @@ const Location = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const { data, error } = await supabase
+        // First try to get from database
+        const { data: existingData, error: dbError } = await supabase
           .from("locations")
           .select("*")
           .eq("state", state)
           .eq("city", city)
           .maybeSingle();
 
-        if (error) {
-          console.error("Error fetching location data:", error);
+        if (dbError) {
+          console.error("Error fetching location data:", dbError);
           setError("Failed to load location data");
-        } else {
-          setLocationData(data);
-          if (data) {
-            document.title = data.meta_title;
+          return;
+        }
+
+        if (existingData) {
+          setLocationData(existingData);
+          if (existingData.meta_title) {
+            document.title = existingData.meta_title;
             const metaDescription = document.querySelector('meta[name="description"]');
             if (metaDescription) {
-              metaDescription.setAttribute("content", data.meta_description);
+              metaDescription.setAttribute("content", existingData.meta_description);
             }
+          }
+        } else {
+          // If not in database, generate content
+          const response = await fetch('/functions/v1/generate-location-content', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ city, state }),
+          });
 
-            if (data.schema_markup) {
-              const scriptTag = document.createElement("script");
-              scriptTag.type = "application/ld+json";
-              scriptTag.text = JSON.stringify(data.schema_markup);
-              document.head.appendChild(scriptTag);
+          if (!response.ok) {
+            throw new Error('Failed to generate content');
+          }
 
-              return () => {
-                document.head.removeChild(scriptTag);
-              };
+          const { content } = await response.json();
+
+          // Save to database
+          const { data: newLocation, error: insertError } = await supabase
+            .from("locations")
+            .insert([
+              {
+                state,
+                city,
+                content,
+                meta_title: `IT Services in ${city}, ${state} | Professional IT Support`,
+                meta_description: `Professional IT services and solutions in ${city}, ${state}. Expert managed IT support, cybersecurity, and cloud solutions for your business.`,
+              },
+            ])
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("Error saving location:", insertError);
+            toast.error("Failed to save location data");
+          } else {
+            setLocationData(newLocation);
+            document.title = newLocation.meta_title;
+            const metaDescription = document.querySelector('meta[name="description"]');
+            if (metaDescription) {
+              metaDescription.setAttribute("content", newLocation.meta_description);
             }
           }
         }
       } catch (err) {
         console.error("Error:", err);
         setError("An unexpected error occurred");
+        toast.error("Failed to load or generate location content");
       } finally {
         setLoading(false);
       }
