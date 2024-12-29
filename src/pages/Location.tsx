@@ -43,20 +43,16 @@ const Location = () => {
             }
           }
         } else {
-          // If not in database, generate content
-          const response = await fetch('/functions/v1/generate-location-content', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ city, state }),
-          });
+          // If not in database, generate content using Supabase Edge Function
+          const { data, error: functionError } = await supabase.functions
+            .invoke('generate-location-content', {
+              body: { city, state },
+            });
 
-          if (!response.ok) {
+          if (functionError || !data) {
+            console.error('Error generating content:', functionError);
             throw new Error('Failed to generate content');
           }
-
-          const { content } = await response.json();
 
           // Save to database
           const { data: newLocation, error: insertError } = await supabase
@@ -65,7 +61,7 @@ const Location = () => {
               {
                 state,
                 city,
-                content,
+                content: data.content,
                 meta_title: `IT Services in ${city}, ${state} | Professional IT Support`,
                 meta_description: `Professional IT services and solutions in ${city}, ${state}. Expert managed IT support, cybersecurity, and cloud solutions for your business.`,
               },

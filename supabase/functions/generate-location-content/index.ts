@@ -9,12 +9,14 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
     const { city, state } = await req.json()
+    console.log(`Generating content for ${city}, ${state}`)
 
     const prompt = `Generate detailed content for an IT services company's location page in ${city}, ${state}. Include:
     1. A compelling introduction about IT services in ${city}
@@ -39,23 +41,32 @@ serve(async (req) => {
       }),
     })
 
-    const data = await response.json()
-    console.log('OpenRouter API response:', data)
-
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to generate content')
+      const error = await response.json()
+      console.error('OpenRouter API error:', error)
+      throw new Error('Failed to generate content')
     }
+
+    const data = await response.json()
+    console.log('OpenRouter API response received')
 
     const generatedContent = data.choices[0].message.content
 
-    return new Response(JSON.stringify({ content: generatedContent }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ content: generatedContent }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 
+      }
+    )
   } catch (error) {
     console.error('Error in generate-location-content function:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
+      }
+    )
   }
 })
