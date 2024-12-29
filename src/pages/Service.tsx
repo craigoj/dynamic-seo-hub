@@ -5,7 +5,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Service() {
-  const { service } = useParams();
+  const { service, city } = useParams();
   const [content, setContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -20,6 +20,7 @@ export default function Service() {
           .from("service_page_cache")
           .select("*")
           .eq("service", service)
+          .eq("city", city || "general")
           .maybeSingle();
 
         if (fetchError) throw fetchError;
@@ -34,8 +35,8 @@ export default function Service() {
         const { data: generatedContent, error: generateError } = await supabase.functions
           .invoke("generate-service-content", {
             body: { 
-              service, 
-              city: "Your City" // You can make this dynamic based on user location
+              service,
+              city: city || "general"
             },
           });
 
@@ -57,7 +58,7 @@ export default function Service() {
     if (service) {
       fetchOrGenerateContent();
     }
-  }, [service]);
+  }, [service, city]);
 
   if (loading) {
     return (
@@ -81,7 +82,12 @@ export default function Service() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-bold mb-4">Service Not Found</h1>
-          <p className="text-gray-600">The requested service content could not be found.</p>
+          <p className="text-gray-600">
+            {city 
+              ? `The requested service content for ${service} in ${city} could not be found.`
+              : `The requested service content for ${service} could not be found.`
+            }
+          </p>
         </div>
       </div>
     );
@@ -96,6 +102,13 @@ export default function Service() {
       {/* Main content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8">
+            {city 
+              ? `${service} Services in ${city}`
+              : `${service} Services`
+            }
+          </h1>
+          
           <div 
             className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: content.content }} 

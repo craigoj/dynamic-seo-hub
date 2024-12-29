@@ -17,18 +17,20 @@ serve(async (req) => {
   try {
     const { city, service } = await req.json()
 
-    if (!city || !service) {
-      throw new Error("City and service are required")
+    if (!service) {
+      throw new Error("Service is required")
     }
+
+    const locationSpecific = city && city !== "general"
+    const locationText = locationSpecific ? ` in ${city}` : ""
 
     // Create content for the service page
     const content = `
       <div class="prose max-w-none">
-        <h1>${service} Services in ${city}</h1>
-        <p>${COMPANY_NAME} provides professional ${service} services to businesses in ${city}. Our team of certified experts ensures your business stays secure and efficient with industry-leading solutions.</p>
+        <p>${COMPANY_NAME} provides professional ${service} services${locationText}. Our team of certified experts ensures your business stays secure and efficient with industry-leading solutions.</p>
         
-        <h2>Our ${service} Solutions</h2>
-        <p>As your trusted technology partner, we offer comprehensive ${service} services tailored to your business needs:</p>
+        <h2>Our ${service} Solutions${locationText}</h2>
+        <p>As your trusted technology partner${locationText}, we offer comprehensive ${service} services tailored to your business needs:</p>
         <ul>
           <li>24/7 Monitoring and Support</li>
           <li>Proactive Maintenance and Updates</li>
@@ -37,8 +39,8 @@ serve(async (req) => {
           <li>Incident Response and Recovery</li>
         </ul>
         
-        <h2>Why Choose ${COMPANY_NAME} for ${service}?</h2>
-        <p>With years of experience and a dedicated team of professionals, we deliver:</p>
+        <h2>Why Choose ${COMPANY_NAME} for ${service}${locationText}?</h2>
+        <p>With years of experience and a dedicated team of professionals${locationSpecific ? ` serving ${city}` : ""}, we deliver:</p>
         <ul>
           <li>Expert Technical Support</li>
           <li>Customized Solutions</li>
@@ -49,8 +51,8 @@ serve(async (req) => {
       </div>
     `
 
-    const metaTitle = `${service} Services in ${city} | ${COMPANY_NAME}`
-    const metaDescription = `${COMPANY_NAME} provides professional ${service} services and solutions in ${city}. Contact us for reliable ${service.toLowerCase()} support and consulting.`
+    const metaTitle = `${service} Services${locationText} | ${COMPANY_NAME}`
+    const metaDescription = `${COMPANY_NAME} provides professional ${service} services and solutions${locationText}. Contact us for reliable ${service.toLowerCase()} support and consulting.`
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!
@@ -61,7 +63,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from("service_page_cache")
       .insert({
-        city,
+        city: city || "general",
         service,
         content,
         meta_title: metaTitle,
@@ -82,16 +84,16 @@ serve(async (req) => {
         ],
         faqs: [
           {
-            question: `What ${service} services does ${COMPANY_NAME} offer?`,
-            answer: `We offer comprehensive ${service} solutions including 24/7 monitoring, proactive maintenance, risk assessment, employee training, and incident response.`
+            question: `What ${service} services does ${COMPANY_NAME} offer${locationText}?`,
+            answer: `We offer comprehensive ${service} solutions including 24/7 monitoring, proactive maintenance, risk assessment, employee training, and incident response${locationSpecific ? ` to businesses in ${city}` : ""}.`
           },
           {
             question: "How quickly can you respond to issues?",
-            answer: "We provide 24/7 support with rapid response times, typically addressing critical issues within 1 hour or less."
+            answer: `We provide 24/7 support with rapid response times${locationSpecific ? ` in ${city}` : ""}, typically addressing critical issues within 1 hour or less.`
           },
           {
             question: "Do you offer customized solutions?",
-            answer: "Yes, we tailor our services to meet your specific business needs and requirements."
+            answer: `Yes, we tailor our ${service} services to meet your specific business needs and requirements${locationSpecific ? ` in ${city}` : ""}.`
           }
         ]
       })
