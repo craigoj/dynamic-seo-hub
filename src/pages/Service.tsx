@@ -13,6 +13,8 @@ export default function Service() {
   useEffect(() => {
     const fetchOrGenerateContent = async () => {
       try {
+        setLoading(true);
+        
         // First, try to fetch existing content
         const { data: existingContent, error: fetchError } = await supabase
           .from("service_page_cache")
@@ -31,7 +33,10 @@ export default function Service() {
         // If no content exists, generate new content
         const { data: generatedContent, error: generateError } = await supabase.functions
           .invoke("generate-service-content", {
-            body: { service, city: "Your City" }, // You can make this dynamic based on user location
+            body: { 
+              service, 
+              city: "Your City" // You can make this dynamic based on user location
+            },
           });
 
         if (generateError) throw generateError;
@@ -55,11 +60,31 @@ export default function Service() {
   }, [service]);
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-8">Loading...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!content) {
-    return <div className="container mx-auto px-4 py-8">Service not found</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-2xl font-bold mb-4">Service Not Found</h1>
+          <p className="text-gray-600">The requested service content could not be found.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -71,7 +96,10 @@ export default function Service() {
       {/* Main content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <div dangerouslySetInnerHTML={{ __html: content.content }} />
+          <div 
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: content.content }} 
+          />
 
           {/* Features Section */}
           {content.features && (
