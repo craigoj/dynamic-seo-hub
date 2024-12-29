@@ -1,10 +1,10 @@
 import { useEffect } from "react";
+import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { ServicesSection } from "@/components/ServicesSection";
 import { IndustriesSection } from "@/components/IndustriesSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
-import { ContentGenerator } from "@/components/ContentGenerator";
 
 const Index = () => {
   useEffect(() => {
@@ -58,6 +58,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Header />
       <HeroSection />
       <ServicesSection />
       <IndustriesSection />
