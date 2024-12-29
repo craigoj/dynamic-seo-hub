@@ -1,4 +1,5 @@
 import { MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const locations = {
   Ohio: [
@@ -33,9 +34,13 @@ export const LocationsSection = () => {
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {cities.map((city) => (
-                  <div key={city} className="text-gray-600">
+                  <Link
+                    key={city}
+                    to={`/locations/${state}/${city}`}
+                    className="text-gray-600 hover:text-blue-600 transition-colors"
+                  >
                     {city}
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

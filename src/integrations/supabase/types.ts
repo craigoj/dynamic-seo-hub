@@ -99,6 +99,42 @@ export type Database = {
         }
         Relationships: []
       }
+      locations: {
+        Row: {
+          city: string
+          content: string
+          created_at: string
+          id: string
+          meta_description: string
+          meta_title: string
+          schema_markup: Json | null
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          city: string
+          content: string
+          created_at?: string
+          id?: string
+          meta_description: string
+          meta_title: string
+          schema_markup?: Json | null
+          state: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          content?: string
+          created_at?: string
+          id?: string
+          meta_description?: string
+          meta_title?: string
+          schema_markup?: Json | null
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_cache: {
         Row: {
           content: string
