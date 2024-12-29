@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeadForm } from "@/components/LeadForm";
+import { LocationLinks } from "@/components/LocationLinks";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Industry {
@@ -22,7 +23,7 @@ const Industry = () => {
         .from("industries")
         .select("*")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching industry:", error);
@@ -31,7 +32,6 @@ const Industry = () => {
 
       setIndustry(data);
 
-      // Update meta tags
       if (data) {
         document.title = data.meta_title;
         const metaDescription = document.querySelector('meta[name="description"]');
@@ -39,7 +39,6 @@ const Industry = () => {
           metaDescription.setAttribute("content", data.meta_description);
         }
 
-        // Add schema markup
         if (data.schema_markup) {
           const scriptTag = document.createElement("script");
           scriptTag.type = "application/ld+json";
@@ -112,6 +111,8 @@ const Industry = () => {
           </div>
         </div>
       </section>
+
+      <LocationLinks />
     </div>
   );
 };

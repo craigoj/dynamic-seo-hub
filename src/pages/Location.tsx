@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ContactSection } from "@/components/ContactSection";
+import { LocationLinks } from "@/components/LocationLinks";
 import type { Database } from "@/integrations/supabase/types";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
@@ -30,14 +31,12 @@ const Location = () => {
         } else {
           setLocationData(data);
           if (data) {
-            // Update meta tags only if we have data
             document.title = data.meta_title;
             const metaDescription = document.querySelector('meta[name="description"]');
             if (metaDescription) {
               metaDescription.setAttribute("content", data.meta_description);
             }
 
-            // Add schema markup if available
             if (data.schema_markup) {
               const scriptTag = document.createElement("script");
               scriptTag.type = "application/ld+json";
@@ -117,6 +116,7 @@ const Location = () => {
           </div>
         </div>
         <ContactSection />
+        <LocationLinks />
       </main>
       <Footer />
     </div>

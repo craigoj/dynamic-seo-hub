@@ -1,6 +1,24 @@
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Briefcase, Factory, Mail } from "lucide-react";
+import { Briefcase, Factory, Mail, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+
+const services = [
+  { title: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
+  { title: "Cloud Solutions", slug: "cloud", description: "Seamless cloud migration and management" },
+  { title: "IT Infrastructure", slug: "infrastructure", description: "Build and maintain robust IT systems" },
+  { title: "Network Management", slug: "network", description: "Ensure optimal network performance" },
+  { title: "Backup & Recovery", slug: "backup", description: "Protect your data with automated solutions" },
+  { title: "IT Consulting", slug: "consulting", description: "Strategic technology planning" }
+];
+
+const industries = [
+  { title: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
+  { title: "Finance", slug: "finance", description: "Secure financial technology solutions" },
+  { title: "Manufacturing", slug: "manufacturing", description: "Modern manufacturing IT solutions" },
+  { title: "Retail", slug: "retail", description: "Technology for modern retail" },
+  { title: "Legal", slug: "legal", description: "Secure document management solutions" },
+  { title: "Education", slug: "education", description: "IT support for educational institutions" }
+];
 
 export const Header = () => {
   return (
@@ -21,22 +39,16 @@ export const Header = () => {
                 <NavigationMenuContent>
                   <div className="grid gap-3 p-6 w-[400px]">
                     <div className="grid grid-cols-2 gap-4">
-                      <Link to="/services/cybersecurity" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Cybersecurity</div>
-                        <p className="text-sm text-muted-foreground">Protect your business with enterprise-grade security</p>
-                      </Link>
-                      <Link to="/services/cloud" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Cloud Solutions</div>
-                        <p className="text-sm text-muted-foreground">Seamless cloud migration and management</p>
-                      </Link>
-                      <Link to="/services/infrastructure" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">IT Infrastructure</div>
-                        <p className="text-sm text-muted-foreground">Build and maintain robust IT systems</p>
-                      </Link>
-                      <Link to="/services/support" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">IT Support</div>
-                        <p className="text-sm text-muted-foreground">24/7 technical support and maintenance</p>
-                      </Link>
+                      {services.map((service) => (
+                        <Link 
+                          key={service.slug}
+                          to={`/services/${service.slug}`} 
+                          className="block p-3 hover:bg-slate-50 rounded-lg"
+                        >
+                          <div className="font-medium mb-1">{service.title}</div>
+                          <p className="text-sm text-muted-foreground">{service.description}</p>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </NavigationMenuContent>
@@ -50,22 +62,16 @@ export const Header = () => {
                 <NavigationMenuContent>
                   <div className="grid gap-3 p-6 w-[400px]">
                     <div className="grid grid-cols-2 gap-4">
-                      <Link to="/industries/healthcare" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Healthcare</div>
-                        <p className="text-sm text-muted-foreground">HIPAA-compliant IT solutions</p>
-                      </Link>
-                      <Link to="/industries/finance" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Finance</div>
-                        <p className="text-sm text-muted-foreground">Secure financial technology solutions</p>
-                      </Link>
-                      <Link to="/industries/manufacturing" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Manufacturing</div>
-                        <p className="text-sm text-muted-foreground">Modern manufacturing IT solutions</p>
-                      </Link>
-                      <Link to="/industries/retail" className="block p-3 hover:bg-slate-50 rounded-lg">
-                        <div className="font-medium mb-1">Retail</div>
-                        <p className="text-sm text-muted-foreground">Technology for modern retail</p>
-                      </Link>
+                      {industries.map((industry) => (
+                        <Link 
+                          key={industry.slug}
+                          to={`/industries/${industry.slug}`} 
+                          className="block p-3 hover:bg-slate-50 rounded-lg"
+                        >
+                          <div className="font-medium mb-1">{industry.title}</div>
+                          <p className="text-sm text-muted-foreground">{industry.description}</p>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </NavigationMenuContent>
