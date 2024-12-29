@@ -18,7 +18,9 @@ export default function Service() {
           .from("service_page_cache")
           .select("*")
           .eq("service", service)
-          .single();
+          .maybeSingle();
+
+        if (fetchError) throw fetchError;
 
         if (existingContent) {
           setContent(existingContent);
