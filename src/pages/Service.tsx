@@ -98,14 +98,16 @@ export default function Service() {
         if (fetchError) throw fetchError;
 
         if (existingContent) {
-          // Convert the Supabase data to ServiceContent format
+          // Convert the Supabase data to ServiceContent format with proper type assertions
           const formattedContent: ServiceContent = {
             meta_title: existingContent.meta_title,
             meta_description: existingContent.meta_description,
             content: existingContent.content,
-            features: existingContent.features as string[],
-            benefits: existingContent.benefits as string[],
-            faqs: existingContent.faqs as FAQ[],
+            features: Array.isArray(existingContent.features) ? existingContent.features as string[] : [],
+            benefits: Array.isArray(existingContent.benefits) ? existingContent.benefits as string[] : [],
+            faqs: Array.isArray(existingContent.faqs) 
+              ? (existingContent.faqs as Array<{ question: string; answer: string }>)
+              : [],
             schema_markup: existingContent.schema_markup
           };
 
