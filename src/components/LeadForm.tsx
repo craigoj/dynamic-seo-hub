@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
+
+// This ensures our form schema matches what Supabase expects
+type LeadInsert = TablesInsert<'leads'>;
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -33,10 +37,13 @@ export function LeadForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { error } = await supabase.from("leads").insert({
+      // Create the lead insert object with all required fields
+      const leadData: LeadInsert = {
         ...values,
         source_url: window.location.href,
-      });
+      };
+
+      const { error } = await supabase.from("leads").insert(leadData);
 
       if (error) throw error;
 
