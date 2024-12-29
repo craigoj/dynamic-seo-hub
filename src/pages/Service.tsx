@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ContactSection } from "@/components/ContactSection";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Json } from "@/integrations/supabase/types";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ServiceSkeleton } from "@/components/service/ServiceSkeleton";
+import { ServiceFeatures } from "@/components/service/ServiceFeatures";
+import { ServiceBenefits } from "@/components/service/ServiceBenefits";
+import { ServiceFAQs } from "@/components/service/ServiceFAQs";
+import { injectSchemaMarkup } from "@/utils/schemaMarkup";
 
 interface FAQ {
   question: string;
@@ -35,32 +40,6 @@ interface ServicePageCache {
   schema_markup: Json;
   service: string;
   updated_at: string;
-}
-
-interface SchemaData {
-  "@context": string;
-  "@type": string;
-  name: string;
-  description: string;
-  provider: {
-    "@type": string;
-    name: string;
-    description: string;
-  };
-  areaServed: string;
-  serviceType: string;
-  offers: {
-    "@type": string;
-    availability: string;
-  };
-  mainEntity?: Array<{
-    "@type": string;
-    name: string;
-    acceptedAnswer: {
-      "@type": string;
-      text: string;
-    };
-  }>;
 }
 
 export default function Service() {
@@ -100,7 +79,7 @@ export default function Service() {
         if (fetchError) throw fetchError;
 
         if (existingContent) {
-          // Convert the Supabase data to ServiceContent format with proper type assertions
+          // Convert the Supabase data to ServiceContent format
           const formattedContent: ServiceContent = {
             meta_title: existingContent.meta_title,
             meta_description: existingContent.meta_description,
@@ -160,72 +139,13 @@ export default function Service() {
   }, [service, city]);
 
   useEffect(() => {
-    // Inject schema markup when content changes
-    if (content?.schema_markup) {
-      const existingSchema = document.querySelector('script[type="application/ld+json"]');
-      if (existingSchema) {
-        existingSchema.remove();
-      }
-
-      const schemaScript = document.createElement('script');
-      schemaScript.type = 'application/ld+json';
-      const schemaData: SchemaData = {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "name": `${service} Services${city ? ` in ${city}` : ''}`,
-        "description": content.meta_description,
-        "provider": {
-          "@type": "Organization",
-          "name": "CTRL Tech",
-          "description": "Professional IT Services Provider"
-        },
-        "areaServed": city || "All locations",
-        "serviceType": service,
-        "offers": {
-          "@type": "Offer",
-          "availability": "https://schema.org/InStock"
-        }
-      };
-
-      if (content.faqs) {
-        schemaData.mainEntity = content.faqs.map((faq) => ({
-          "@type": "Question",
-          "name": faq.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": faq.answer
-          }
-        }));
-      }
-
-      schemaScript.textContent = JSON.stringify(schemaData);
-      document.head.appendChild(schemaScript);
-
-      return () => {
-        schemaScript.remove();
-      };
+    if (content?.meta_description && service) {
+      return injectSchemaMarkup(service, city, content.meta_description, content.faqs);
     }
   }, [content, service, city]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+    return <ServiceSkeleton />;
   }
 
   if (!content) {
@@ -271,50 +191,9 @@ export default function Service() {
               dangerouslySetInnerHTML={{ __html: content?.content }} 
             />
 
-            {/* Features Section */}
-            {content?.features && (
-              <section className="my-12">
-                <h2 className="text-2xl font-bold mb-6">Key Features</h2>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {content.features.map((feature: string, index: number) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* Benefits Section */}
-            {content?.benefits && (
-              <section className="my-12">
-                <h2 className="text-2xl font-bold mb-6">Benefits</h2>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {content.benefits.map((benefit: string, index: number) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full" />
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* FAQs Section */}
-            {content?.faqs && (
-              <section className="my-12">
-                <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-                <div className="space-y-6">
-                  {content.faqs.map((faq: { question: string; answer: string }, index: number) => (
-                    <div key={index} className="border-b pb-4">
-                      <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
-                      <p className="text-gray-600">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            <ServiceFeatures features={content.features || []} />
+            <ServiceBenefits benefits={content.benefits || []} />
+            <ServiceFAQs faqs={content.faqs || []} />
           </div>
         </div>
 
