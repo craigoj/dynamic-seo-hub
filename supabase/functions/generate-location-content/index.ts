@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
-
-const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY')
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +17,16 @@ serve(async (req) => {
     const { city, state } = await req.json()
     console.log(`Generating content for ${city}, ${state}`)
 
+    // Initialize Supabase client with service role key
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing environment variables')
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
     const prompt = `Generate detailed content for an IT services company's location page in ${city}, ${state}. Include:
     1. A compelling introduction about IT services in ${city}
     2. Key services offered (cybersecurity, cloud solutions, managed IT)
@@ -25,6 +34,12 @@ serve(async (req) => {
     4. Local business context and relevance
     Format in HTML with proper h2, h3, p, and ul/li tags.`
 
+    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY')
+    if (!OPENROUTER_API_KEY) {
+      throw new Error('OpenRouter API key not found')
+    }
+
+    console.log('Calling OpenRouter API...')
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
