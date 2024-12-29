@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ContactSection } from "@/components/ContactSection";
 import { useToast } from "@/components/ui/use-toast";
 import { Json } from "@/integrations/supabase/types";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 interface FAQ {
   question: string;
@@ -207,107 +209,119 @@ export default function Service() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+              </div>
             </div>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!content) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Service Not Found</h1>
-          <p className="text-gray-600">
-            {city 
-              ? `The requested service content for ${service} in ${city} could not be found.`
-              : `The requested service content for ${service} could not be found.`
-            }
-          </p>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-2xl font-bold mb-4">Service Not Found</h1>
+            <p className="text-gray-600">
+              {city 
+                ? `The requested service content for ${service} in ${city} could not be found.`
+                : `The requested service content for ${service} could not be found.`
+              }
+            </p>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Meta tags */}
-      <title>{content?.meta_title}</title>
-      <meta name="description" content={content?.meta_description} />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        {/* Meta tags */}
+        <title>{content?.meta_title}</title>
+        <meta name="description" content={content?.meta_description} />
 
-      {/* Main content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8">
-            {city 
-              ? `${service} Services in ${city}`
-              : `${service} Services`
-            }
-          </h1>
-          
-          <div 
-            className="prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: content?.content }} 
-          />
+        {/* Main content */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-4xl font-bold mb-8">
+              {city 
+                ? `${service} Services in ${city}`
+                : `${service} Services`
+              }
+            </h1>
+            
+            <div 
+              className="prose max-w-none"
+              dangerouslySetInnerHTML={{ __html: content?.content }} 
+            />
 
-          {/* Features Section */}
-          {content?.features && (
-            <section className="my-12">
-              <h2 className="text-2xl font-bold mb-6">Key Features</h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {content.features.map((feature: string, index: number) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            {/* Features Section */}
+            {content?.features && (
+              <section className="my-12">
+                <h2 className="text-2xl font-bold mb-6">Key Features</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {content.features.map((feature: string, index: number) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-          {/* Benefits Section */}
-          {content?.benefits && (
-            <section className="my-12">
-              <h2 className="text-2xl font-bold mb-6">Benefits</h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {content.benefits.map((benefit: string, index: number) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            {/* Benefits Section */}
+            {content?.benefits && (
+              <section className="my-12">
+                <h2 className="text-2xl font-bold mb-6">Benefits</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {content.benefits.map((benefit: string, index: number) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-          {/* FAQs Section with Schema Markup */}
-          {content?.faqs && (
-            <section className="my-12">
-              <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-              <div className="space-y-6">
-                {content.faqs.map((faq: { question: string; answer: string }, index: number) => (
-                  <div key={index} className="border-b pb-4">
-                    <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+            {/* FAQs Section */}
+            {content?.faqs && (
+              <section className="my-12">
+                <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+                <div className="space-y-6">
+                  {content.faqs.map((faq: { question: string; answer: string }, index: number) => (
+                    <div key={index} className="border-b pb-4">
+                      <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
+                      <p className="text-gray-600">{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
         </div>
-      </main>
 
-      {/* Contact Section */}
-      <ContactSection />
+        {/* Contact Section */}
+        <ContactSection />
+      </main>
+      <Footer />
     </div>
   );
 }
