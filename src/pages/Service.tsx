@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ContactSection } from "@/components/ContactSection";
 import { useToast } from "@/components/ui/use-toast";
+import { Json } from "@/integrations/supabase/types";
 
 interface FAQ {
   question: string;
@@ -17,6 +18,21 @@ interface ServiceContent {
   benefits?: string[];
   faqs?: FAQ[];
   schema_markup?: any;
+}
+
+interface ServicePageCache {
+  benefits: Json;
+  city: string;
+  content: string;
+  created_at: string;
+  faqs: Json;
+  features: Json;
+  id: string;
+  meta_description: string;
+  meta_title: string;
+  schema_markup: Json;
+  service: string;
+  updated_at: string;
 }
 
 interface SchemaData {
@@ -82,12 +98,24 @@ export default function Service() {
         if (fetchError) throw fetchError;
 
         if (existingContent) {
+          // Convert the Supabase data to ServiceContent format
+          const formattedContent: ServiceContent = {
+            meta_title: existingContent.meta_title,
+            meta_description: existingContent.meta_description,
+            content: existingContent.content,
+            features: existingContent.features as string[],
+            benefits: existingContent.benefits as string[],
+            faqs: existingContent.faqs as FAQ[],
+            schema_markup: existingContent.schema_markup
+          };
+
           // Update local storage cache
           localStorage.setItem(cacheKey, JSON.stringify({
-            data: existingContent,
+            data: formattedContent,
             timestamp: Date.now()
           }));
-          setContent(existingContent);
+          
+          setContent(formattedContent);
           setLoading(false);
           return;
         }
