@@ -1,8 +1,60 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Shield, Cloud, Server, Network, Database } from "lucide-react";
+import { LeadForm } from "@/components/LeadForm";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  useEffect(() => {
+    // Update meta tags
+    document.title = "Enterprise IT Solutions | Nationwide Managed Services";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Nationwide managed IT services tailored to your industry. Experience reliable, secure, and scalable technology solutions for your business.");
+    }
+
+    // Add schema markup
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "ITService",
+      "name": "Your Company IT Solutions",
+      "description": "Nationwide managed IT services tailored to your industry",
+      "areaServed": "United States",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "IT Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Cybersecurity",
+              "description": "Enterprise-grade security solutions and 24/7 monitoring"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Cloud Solutions",
+              "description": "Cloud migration and management services"
+            }
+          }
+        ]
+      }
+    };
+
+    const scriptTag = document.createElement("script");
+    scriptTag.type = "application/ld+json";
+    scriptTag.text = JSON.stringify(schema);
+    document.head.appendChild(scriptTag);
+
+    return () => {
+      document.head.removeChild(scriptTag);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -15,7 +67,10 @@ const Index = () => {
             <p className="text-xl mb-8">
               Nationwide managed IT services tailored to your industry. Experience reliable, secure, and scalable technology solutions.
             </p>
-            <Button size="lg" variant="secondary">
+            <Button size="lg" variant="secondary" onClick={() => {
+              const formSection = document.getElementById("contact-form");
+              formSection?.scrollIntoView({ behavior: "smooth" });
+            }}>
               Get Your Free IT Assessment
             </Button>
           </div>
@@ -74,6 +129,16 @@ const Index = () => {
                 </CardHeader>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section id="contact-form" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-12">Get Your Free IT Assessment</h2>
+            <LeadForm />
           </div>
         </div>
       </section>
