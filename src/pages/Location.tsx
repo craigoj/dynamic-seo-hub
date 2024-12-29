@@ -19,6 +19,10 @@ const Location = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
+        if (!state || !city) {
+          throw new Error("State and city are required");
+        }
+
         // First try to get from database
         const { data: existingData, error: dbError } = await supabase
           .from("locations")
@@ -29,11 +33,11 @@ const Location = () => {
 
         if (dbError) {
           console.error("Error fetching location data:", dbError);
-          setError("Failed to load location data");
-          return;
+          throw new Error("Failed to load location data");
         }
 
         if (existingData) {
+          console.log("Found existing location data:", existingData);
           setLocationData(existingData);
           if (existingData.meta_title) {
             document.title = existingData.meta_title;
@@ -43,25 +47,32 @@ const Location = () => {
             }
           }
         } else {
-          // If not in database, generate content using Supabase Edge Function
-          const { data, error: functionError } = await supabase.functions
+          console.log("No existing data found, generating content...");
+          // Generate content using Edge Function
+          const { data: generatedData, error: functionError } = await supabase.functions
             .invoke('generate-location-content', {
-              body: { city, state },
+              body: { city, state }
             });
 
-          if (functionError || !data) {
+          if (functionError) {
             console.error('Error generating content:', functionError);
             throw new Error('Failed to generate content');
           }
 
-          // Save to database
+          if (!generatedData?.content) {
+            throw new Error('No content generated');
+          }
+
+          console.log("Content generated successfully, saving to database...");
+
+          // Save to database using service role
           const { data: newLocation, error: insertError } = await supabase
             .from("locations")
             .insert([
               {
                 state,
                 city,
-                content: data.content,
+                content: generatedData.content,
                 meta_title: `IT Services in ${city}, ${state} | Professional IT Support`,
                 meta_description: `Professional IT services and solutions in ${city}, ${state}. Expert managed IT support, cybersecurity, and cloud solutions for your business.`,
               },
@@ -71,19 +82,20 @@ const Location = () => {
 
           if (insertError) {
             console.error("Error saving location:", insertError);
-            toast.error("Failed to save location data");
-          } else {
-            setLocationData(newLocation);
-            document.title = newLocation.meta_title;
-            const metaDescription = document.querySelector('meta[name="description"]');
-            if (metaDescription) {
-              metaDescription.setAttribute("content", newLocation.meta_description);
-            }
+            throw new Error("Failed to save location data");
+          }
+
+          console.log("Location saved successfully:", newLocation);
+          setLocationData(newLocation);
+          document.title = newLocation.meta_title;
+          const metaDescription = document.querySelector('meta[name="description"]');
+          if (metaDescription) {
+            metaDescription.setAttribute("content", newLocation.meta_description);
           }
         }
       } catch (err) {
         console.error("Error:", err);
-        setError("An unexpected error occurred");
+        setError(err instanceof Error ? err.message : "An unexpected error occurred");
         toast.error("Failed to load or generate location content");
       } finally {
         setLoading(false);
