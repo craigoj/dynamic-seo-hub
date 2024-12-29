@@ -15,7 +15,22 @@ export default function Service() {
       try {
         setLoading(true);
         
-        // First, try to fetch existing content
+        // First, try to fetch from local storage cache
+        const cacheKey = `service_${service}_${city || 'general'}`;
+        const cachedData = localStorage.getItem(cacheKey);
+        
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          // Check if cache is less than 24 hours old
+          if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+            console.log("Using cached data");
+            setContent(data);
+            setLoading(false);
+            return;
+          }
+        }
+        
+        // If no valid cache, try to fetch existing content from Supabase
         const { data: existingContent, error: fetchError } = await supabase
           .from("service_page_cache")
           .select("*")
@@ -26,6 +41,11 @@ export default function Service() {
         if (fetchError) throw fetchError;
 
         if (existingContent) {
+          // Update local storage cache
+          localStorage.setItem(cacheKey, JSON.stringify({
+            data: existingContent,
+            timestamp: Date.now()
+          }));
           setContent(existingContent);
           setLoading(false);
           return;
@@ -42,6 +62,12 @@ export default function Service() {
 
         if (generateError) throw generateError;
 
+        // Cache the generated content
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: generatedContent,
+          timestamp: Date.now()
+        }));
+        
         setContent(generatedContent);
       } catch (error) {
         console.error("Error fetching/generating content:", error);
@@ -59,6 +85,54 @@ export default function Service() {
       fetchOrGenerateContent();
     }
   }, [service, city]);
+
+  useEffect(() => {
+    // Inject schema markup when content changes
+    if (content?.schema_markup) {
+      const existingSchema = document.querySelector('script[type="application/ld+json"]');
+      if (existingSchema) {
+        existingSchema.remove();
+      }
+
+      const schemaScript = document.createElement('script');
+      schemaScript.type = 'application/ld+json';
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": `${service} Services${city ? ` in ${city}` : ''}`,
+        "description": content.meta_description,
+        "provider": {
+          "@type": "Organization",
+          "name": "CTRL Tech",
+          "description": "Professional IT Services Provider"
+        },
+        "areaServed": city || "All locations",
+        "serviceType": service,
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/InStock"
+        }
+      };
+
+      if (content.faqs) {
+        schemaData.mainEntity = content.faqs.map((faq: any) => ({
+          "@type": "Question",
+          "name": faq.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.answer
+          }
+        }));
+      }
+
+      schemaScript.textContent = JSON.stringify(schemaData);
+      document.head.appendChild(schemaScript);
+
+      return () => {
+        schemaScript.remove();
+      };
+    }
+  }, [content, service, city]);
 
   if (loading) {
     return (
@@ -96,8 +170,8 @@ export default function Service() {
   return (
     <div className="min-h-screen">
       {/* Meta tags */}
-      <title>{content.meta_title}</title>
-      <meta name="description" content={content.meta_description} />
+      <title>{content?.meta_title}</title>
+      <meta name="description" content={content?.meta_description} />
 
       {/* Main content */}
       <main className="container mx-auto px-4 py-8">
@@ -111,11 +185,11 @@ export default function Service() {
           
           <div 
             className="prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: content.content }} 
+            dangerouslySetInnerHTML={{ __html: content?.content }} 
           />
 
           {/* Features Section */}
-          {content.features && (
+          {content?.features && (
             <section className="my-12">
               <h2 className="text-2xl font-bold mb-6">Key Features</h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -130,7 +204,7 @@ export default function Service() {
           )}
 
           {/* Benefits Section */}
-          {content.benefits && (
+          {content?.benefits && (
             <section className="my-12">
               <h2 className="text-2xl font-bold mb-6">Benefits</h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -144,8 +218,8 @@ export default function Service() {
             </section>
           )}
 
-          {/* FAQs Section */}
-          {content.faqs && (
+          {/* FAQs Section with Schema Markup */}
+          {content?.faqs && (
             <section className="my-12">
               <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
               <div className="space-y-6">
