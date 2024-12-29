@@ -48,44 +48,33 @@ const Location = () => {
           }
         } else {
           console.log("No existing data found, generating content...");
+          
           // Generate content using Edge Function
           const { data: generatedData, error: functionError } = await supabase.functions
             .invoke('generate-location-content', {
               body: { city, state }
             });
 
-          if (functionError) {
+          if (functionError || !generatedData) {
             console.error('Error generating content:', functionError);
             throw new Error('Failed to generate content');
           }
 
-          if (!generatedData?.content) {
-            throw new Error('No content generated');
-          }
-
-          console.log("Content generated successfully, saving to database...");
-
-          // Save to database using service role
-          const { data: newLocation, error: insertError } = await supabase
+          // The Edge Function now handles saving to the database
+          // Fetch the newly created location data
+          const { data: newLocation, error: fetchError } = await supabase
             .from("locations")
-            .insert([
-              {
-                state,
-                city,
-                content: generatedData.content,
-                meta_title: `IT Services in ${city}, ${state} | Professional IT Support`,
-                meta_description: `Professional IT services and solutions in ${city}, ${state}. Expert managed IT support, cybersecurity, and cloud solutions for your business.`,
-              },
-            ])
-            .select()
+            .select("*")
+            .eq("state", state)
+            .eq("city", city)
             .single();
 
-          if (insertError) {
-            console.error("Error saving location:", insertError);
-            throw new Error("Failed to save location data");
+          if (fetchError) {
+            console.error("Error fetching new location:", fetchError);
+            throw new Error("Failed to retrieve location data");
           }
 
-          console.log("Location saved successfully:", newLocation);
+          console.log("Location data retrieved successfully:", newLocation);
           setLocationData(newLocation);
           document.title = newLocation.meta_title;
           const metaDescription = document.querySelector('meta[name="description"]');

@@ -18,14 +18,32 @@ serve(async (req) => {
     console.log(`Generating content for ${city}, ${state}`)
 
     // Initialize Supabase client with service role key
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing environment variables')
-    }
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    // First check if location already exists
+    const { data: existingLocation } = await supabaseAdmin
+      .from('locations')
+      .select('*')
+      .eq('state', state)
+      .eq('city', city)
+      .maybeSingle()
+
+    if (existingLocation) {
+      console.log('Location already exists:', existingLocation)
+      return new Response(
+        JSON.stringify({ content: existingLocation.content }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     const prompt = `Generate detailed content for an IT services company's location page in ${city}, ${state}. Include:
     1. A compelling introduction about IT services in ${city}
@@ -67,17 +85,39 @@ serve(async (req) => {
 
     const generatedContent = data.choices[0].message.content
 
+    // Save to database using service role client
+    const { data: newLocation, error: insertError } = await supabaseAdmin
+      .from('locations')
+      .insert([
+        {
+          state,
+          city,
+          content: generatedContent,
+          meta_title: `IT Services in ${city}, ${state} | Professional IT Support`,
+          meta_description: `Professional IT services and solutions in ${city}, ${state}. Expert managed IT support, cybersecurity, and cloud solutions for your business.`,
+        }
+      ])
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Error saving to database:', insertError)
+      throw new Error('Failed to save location data')
+    }
+
+    console.log('Location saved successfully:', newLocation)
+
     return new Response(
       JSON.stringify({ content: generatedContent }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error in generate-location-content function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred',
+        details: error
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500 
