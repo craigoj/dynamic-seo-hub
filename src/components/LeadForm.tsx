@@ -39,7 +39,12 @@ export function LeadForm() {
     try {
       // Create the lead insert object with all required fields
       const leadData: LeadInsert = {
-        ...values,
+        name: values.name,
+        email: values.email,
+        city: values.city,
+        company: values.company,
+        phone: values.phone,
+        message: values.message,
         source_url: window.location.href,
       };
 
