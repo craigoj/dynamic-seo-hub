@@ -9,6 +9,7 @@ import { useServiceContent } from "@/hooks/useServiceContent";
 import { injectSchemaMarkup } from "@/utils/schemaMarkup";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Service() {
   const { service, city, industry } = useParams();
@@ -50,23 +51,28 @@ export default function Service() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/20">
       <Header />
       <main className="flex-grow">
         <title>{content.meta_title}</title>
         <meta name="description" content={content.meta_description} />
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-end mb-4">
+        <div className="container mx-auto px-4 py-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-end mb-6"
+          >
             <Button 
               onClick={handleRegenerateContent}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:shadow-md transition-shadow"
             >
               <RefreshCw className="h-4 w-4" />
               Regenerate Content
             </Button>
-          </div>
+          </motion.div>
           
           <ServiceContent 
             service={service}
