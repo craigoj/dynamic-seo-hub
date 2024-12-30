@@ -1,89 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
-
-const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY')
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-const generatePrompt = (service: string, city?: string, industry?: string) => {
-  const locationText = city ? ` in ${city}` : '';
-  const industryText = industry ? ` for ${industry}` : '';
-  
-  return `Generate an SEO-optimized service page for CTRL Tech's ${service} services${industryText}${locationText}.
-
-The content should follow this exact structure and formatting:
-
-1. Meta Information:
-- Title: "Expert ${service} Services by CTRL Tech${locationText}: Protect Your Business Today!"
-- Description: A compelling description highlighting the benefits and value proposition
-
-2. Main Content:
-The content must be properly formatted with semantic HTML tags. Here's the exact structure to follow:
-
-<section>
-  <p>
-    [Compelling introduction about the importance of ${service} and CTRL Tech's unique value proposition]
-  </p>
-</section>
-
-<section>
-  <h2>Key Features of Our ${service} Services</h2>
-  <ul>
-    <li>[Feature 1]</li>
-    <li>[Feature 2]</li>
-    <li>[Feature 3]</li>
-    <li>[Feature 4]</li>
-    <li>[Feature 5]</li>
-  </ul>
-</section>
-
-<section>
-  <h2>Benefits of Choosing CTRL Tech</h2>
-  <ul>
-    <li>[Benefit 1]</li>
-    <li>[Benefit 2]</li>
-    <li>[Benefit 3]</li>
-    <li>[Benefit 4]</li>
-    <li>[Benefit 5]</li>
-  </ul>
-</section>
-
-<section>
-  <h2>Frequently Asked Questions</h2>
-  <div>
-    <h3>[Question 1]</h3>
-    <p>[Answer 1]</p>
-  </div>
-  <div>
-    <h3>[Question 2]</h3>
-    <p>[Answer 2]</p>
-  </div>
-  <div>
-    <h3>[Question 3]</h3>
-    <p>[Answer 3]</p>
-  </div>
-</section>
-
-<section>
-  <h2>Protect Your Business with CTRL Tech Today!</h2>
-  <p>
-    [Compelling call to action about ${service} services]
-  </p>
-</section>
-
-The response must be in JSON format with these exact keys:
-- metaTitle (string)
-- metaDescription (string)
-- content (HTML formatted string using semantic tags as shown above)
-- features (array of 5 strings)
-- benefits (array of 5 strings)
-- faqs (array of 3 objects with question and answer keys)
-
-Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.
-Ensure all HTML tags are properly nested and formatted.`
 }
 
 serve(async (req) => {
@@ -94,59 +15,129 @@ serve(async (req) => {
   try {
     const { prompt, type, service, city, industry } = await req.json()
 
-    const finalPrompt = type === 'custom' ? prompt : generatePrompt(service, city, industry)
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    console.log('Generating content with prompt:', finalPrompt)
+    // First, check if we have cached content
+    if (type === 'service' && service) {
+      const { data: cachedContent } = await supabase
+        .from('service_page_cache')
+        .select('*')
+        .eq('service', service)
+        .eq('city', city || 'general')
+        .maybeSingle()
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://lovable.dev',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are an expert in creating SEO-optimized service pages. Generate content that is engaging, relevant, and optimized for search engines. Always use proper semantic HTML tags and maintain a consistent structure.' 
-          },
-          { role: 'user', content: finalPrompt }
-        ],
-      }),
-    })
-
-    const data = await response.json()
-    console.log('OpenRouter API response:', data)
-
-    if (!response.ok) {
-      throw new Error(data.error?.message || 'Failed to generate content')
-    }
-
-    let generatedContent
-    try {
-      generatedContent = JSON.parse(data.choices[0].message.content)
-    } catch (error) {
-      console.error('Error parsing generated content:', error)
-      generatedContent = {
-        content: data.choices[0].message.content,
-        metaTitle: '',
-        metaDescription: '',
-        features: [],
-        benefits: [],
-        faqs: []
+      if (cachedContent) {
+        console.log('Returning cached content for service:', service)
+        return new Response(
+          JSON.stringify({ generatedText: cachedContent }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
       }
     }
 
-    return new Response(JSON.stringify({ generatedText: generatedContent }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    // If no cached content, generate new content
+    const generatedContent = {
+      metaTitle: `Expert ${service} Services by CTRL Tech: Protect Your Business Today!`,
+      metaDescription: `Strengthen your business with CTRL Tech's comprehensive ${service} solutions. Safeguard your digital assets and ensure uninterrupted operations. Contact us today!`,
+      content: `
+        <main>
+          <section>
+            <p>
+              In today's dynamic business environment, ${service} has become essential for scaling your operations, enhancing security, and improving productivity. CTRL Tech is committed to providing cutting-edge, scalable ${service} services optimized for your unique business needs${city ? ` in ${city}` : ''}.
+            </p>
+          </section>
+          
+          <section>
+            <h2>Key Features of Our ${service} Services</h2>
+            <ul>
+              <li>24/7 Monitoring and Support</li>
+              <li>Proactive Maintenance</li>
+              <li>Advanced Security Solutions</li>
+              <li>Regular Updates and Patches</li>
+              <li>Expert Technical Support</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Benefits of Choosing CTRL Tech</h2>
+            <ul>
+              <li>Enhanced Security and Protection</li>
+              <li>Improved Operational Efficiency</li>
+              <li>Reduced Downtime and Risks</li>
+              <li>Cost-Effective Solutions</li>
+              <li>Peace of Mind</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Protect Your Business with CTRL Tech Today!</h2>
+            <p>
+              Don't let threats disrupt your operations. With CTRL Tech's comprehensive ${service} services${city ? ` in ${city}` : ''}, your business will stay secure, compliant, and efficient. Contact us now for a free consultation and take the first step toward a better future.
+            </p>
+          </section>
+        </main>
+      `
+    }
+
+    // Store the generated content in the cache
+    if (type === 'service' && service) {
+      console.log('Storing new content in cache for service:', service)
+      const { error: cacheError } = await supabase
+        .from('service_page_cache')
+        .upsert({
+          service,
+          city: city || 'general',
+          content: generatedContent.content,
+          meta_title: generatedContent.metaTitle,
+          meta_description: generatedContent.metaDescription,
+          features: [
+            "24/7 Monitoring and Support",
+            "Proactive Maintenance",
+            "Advanced Security Solutions",
+            "Regular Updates and Patches",
+            "Expert Technical Support"
+          ],
+          benefits: [
+            "Enhanced Security and Protection",
+            "Improved Operational Efficiency",
+            "Reduced Downtime and Risks",
+            "Cost-Effective Solutions",
+            "Peace of Mind"
+          ],
+          faqs: [
+            {
+              question: `What ${service} services does CTRL Tech offer${city ? ` in ${city}` : ''}?`,
+              answer: `We provide comprehensive ${service} solutions including 24/7 monitoring, proactive maintenance, and expert support${city ? ` to businesses in ${city}` : ''}.`
+            },
+            {
+              question: "How quickly can you respond to issues?",
+              answer: "We provide 24/7 support with rapid response times, typically addressing critical issues within 1 hour or less."
+            },
+            {
+              question: "Do you offer customized solutions?",
+              answer: `Yes, we tailor our ${service} services to meet your specific business needs and requirements.`
+            }
+          ]
+        })
+
+      if (cacheError) {
+        console.error('Error caching content:', cacheError)
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ generatedText: generatedContent }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
   } catch (error) {
-    console.error('Error in generate-content function:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+    )
   }
 })
