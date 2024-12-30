@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { generateSEOContent } from "@/utils/contentGenerator";
 
 interface ServiceContent {
   meta_title: string;
@@ -28,6 +27,7 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
         
         if (cachedData) {
           const { data, timestamp } = JSON.parse(cachedData);
+          // Cache for 24 hours
           if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
             setContent(data);
             setLoading(false);
@@ -35,6 +35,7 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
           }
         }
         
+        // Check database cache
         const { data: existingContent, error: fetchError } = await supabase
           .from("service_page_cache")
           .select("*")
@@ -49,11 +50,9 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
             meta_title: existingContent.meta_title,
             meta_description: existingContent.meta_description,
             content: existingContent.content,
-            features: Array.isArray(existingContent.features) ? existingContent.features as string[] : [],
-            benefits: Array.isArray(existingContent.benefits) ? existingContent.benefits as string[] : [],
-            faqs: Array.isArray(existingContent.faqs) 
-              ? (existingContent.faqs as Array<{ question: string; answer: string }>)
-              : [],
+            features: existingContent.features,
+            benefits: existingContent.benefits,
+            faqs: existingContent.faqs,
             schema_markup: existingContent.schema_markup
           };
 
@@ -67,29 +66,43 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
           return;
         }
 
-        const generatedContent = generateSEOContent({ 
-          service: service || '',
-          city,
-          industry,
-          state: 'California'
+        // Generate new content
+        const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-content', {
+          body: { 
+            type: 'service',
+            service,
+            city,
+            industry
+          },
         });
 
-        // Transform the generated content to match the ServiceContent interface
-        const formattedGeneratedContent: ServiceContent = {
-          meta_title: generatedContent.metaTitle,
-          meta_description: generatedContent.metaDescription,
-          content: generatedContent.content,
-          features: generatedContent.features,
-          benefits: generatedContent.benefits,
-          faqs: generatedContent.faqs
-        };
+        if (generateError) throw generateError;
 
+        const generatedContent = generatedData.generatedText;
+
+        // Store in database cache
+        const { error: insertError } = await supabase
+          .from("service_page_cache")
+          .insert({
+            service: service,
+            city: city || "general",
+            content: generatedContent.content,
+            meta_title: generatedContent.metaTitle,
+            meta_description: generatedContent.metaDescription,
+            features: generatedContent.features,
+            benefits: generatedContent.benefits,
+            faqs: generatedContent.faqs
+          });
+
+        if (insertError) throw insertError;
+
+        // Store in local cache
         localStorage.setItem(cacheKey, JSON.stringify({
-          data: formattedGeneratedContent,
+          data: generatedContent,
           timestamp: Date.now()
         }));
         
-        setContent(formattedGeneratedContent);
+        setContent(generatedContent);
       } catch (error) {
         console.error("Error fetching/generating content:", error);
         toast({

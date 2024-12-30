@@ -2,23 +2,32 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 
 interface ContentGeneratorProps {
-  onGenerated?: (content: string) => void;
-  type?: 'meta-description' | 'meta-title' | 'description' | 'schema';
+  onGenerated?: (content: any) => void;
+  type?: 'custom' | 'service';
   defaultPrompt?: string;
+  service?: string;
+  city?: string;
+  industry?: string;
 }
 
-export const ContentGenerator = ({ onGenerated, type = 'description', defaultPrompt = '' }: ContentGeneratorProps) => {
+export const ContentGenerator = ({ 
+  onGenerated, 
+  type = 'custom', 
+  defaultPrompt = '',
+  service,
+  city,
+  industry
+}: ContentGeneratorProps) => {
   const [prompt, setPrompt] = useState(defaultPrompt)
   const [isGenerating, setIsGenerating] = useState(false)
   const { toast } = useToast()
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
+    if (type === 'custom' && !prompt.trim()) {
       toast({
         title: "Error",
         description: "Please enter a prompt",
@@ -30,7 +39,13 @@ export const ContentGenerator = ({ onGenerated, type = 'description', defaultPro
     setIsGenerating(true)
     try {
       const { data, error } = await supabase.functions.invoke('generate-content', {
-        body: { prompt, type },
+        body: { 
+          prompt, 
+          type,
+          service,
+          city,
+          industry
+        },
       })
 
       if (error) throw error
@@ -61,12 +76,14 @@ export const ContentGenerator = ({ onGenerated, type = 'description', defaultPro
         <CardDescription>Generate content using AI</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Textarea
-          placeholder="Enter your prompt here..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[100px]"
-        />
+        {type === 'custom' && (
+          <Textarea
+            placeholder="Enter your prompt here..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="min-h-[100px]"
+          />
+        )}
         <div className="flex justify-end">
           <Button 
             onClick={handleGenerate}
