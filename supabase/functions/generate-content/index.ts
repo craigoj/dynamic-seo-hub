@@ -20,46 +20,56 @@ The content should follow this exact structure and formatting:
 - Title: "Expert ${service} Services by CTRL Tech${locationText}: Empower Your Business Today!"
 - Description: A compelling description highlighting the benefits and value proposition
 
-2. Main Content (use proper HTML tags):
-- H1 heading with the service title
-- Introduction paragraph about the importance of ${service}
-- Specific challenges and solutions for ${industry || 'businesses'}
-- CTRL Tech's expertise and approach
+2. Main Content:
+The content must be properly formatted with semantic HTML tags. Here's the exact structure to follow:
 
-3. Key Features Section:
-<h2>Key Features of Our ${service} Services</h2>
-<ul>
-  <li>[Feature 1]</li>
-  <li>[Feature 2]</li>
-  ...etc
-</ul>
+<div class="prose max-w-none">
+  <h1>Expert ${service} Services by CTRL Tech${locationText}</h1>
+  
+  <div class="introduction">
+    <p>[Compelling introduction about the importance of ${service}]</p>
+  </div>
 
-4. Benefits Section:
-<h2>Benefits of Choosing CTRL Tech</h2>
-<ul>
-  <li>[Benefit 1]</li>
-  <li>[Benefit 2]</li>
-  ...etc
-</ul>
+  <h2>Key Features of Our ${service} Services</h2>
+  <ul>
+    <li>[Feature 1]</li>
+    <li>[Feature 2]</li>
+    <li>[Feature 3]</li>
+    <li>[Feature 4]</li>
+    <li>[Feature 5]</li>
+  </ul>
 
-5. FAQ Section:
-<h2>Frequently Asked Questions</h2>
-[Series of questions and answers about ${service}]
+  <h2>Benefits of Choosing CTRL Tech</h2>
+  <ul>
+    <li>[Benefit 1]</li>
+    <li>[Benefit 2]</li>
+    <li>[Benefit 3]</li>
+    <li>[Benefit 4]</li>
+    <li>[Benefit 5]</li>
+  </ul>
 
-6. Call to Action:
-<h2>Transform Your Business with CTRL Tech's ${service} Solutions</h2>
-[Compelling CTA text]
+  <h2>Frequently Asked Questions</h2>
+  <div class="faqs">
+    [Series of questions and answers about ${service}]
+  </div>
+
+  <h2>Transform Your Business with CTRL Tech's ${service} Solutions</h2>
+  <div class="cta">
+    <p>[Compelling call to action]</p>
+    <a href="/contact" class="cta-button">Schedule a Free Consultation</a>
+  </div>
+</div>
 
 The response must be in JSON format with these exact keys:
 - metaTitle (string)
 - metaDescription (string)
-- content (HTML formatted string using semantic tags)
+- content (HTML formatted string using semantic tags as shown above)
 - features (array of 5-6 strings)
 - benefits (array of 5-6 strings)
 - faqs (array of objects with question and answer keys)
 
 Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.
-Use proper semantic HTML tags throughout the content.`
+Ensure all HTML tags are properly nested and formatted.`
 }
 
 serve(async (req) => {
