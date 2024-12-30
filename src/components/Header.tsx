@@ -1,5 +1,5 @@
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Briefcase, Factory, Mail, MapPin } from "lucide-react";
+import { Briefcase, Factory, Mail, MapPin, Robot } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const services = [
@@ -75,6 +75,16 @@ export const Header = () => {
                     </div>
                   </div>
                 </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link 
+                  to="/ai-services" 
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  <Robot className="h-4 w-4" />
+                  AI Services
+                </Link>
               </NavigationMenuItem>
 
               <NavigationMenuItem>

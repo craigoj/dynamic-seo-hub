@@ -3,6 +3,7 @@ import Index from "./pages/Index";
 import Industry from "./pages/Industry";
 import Location from "./pages/Location";
 import Service from "./pages/Service";
+import AIServices from "./pages/AIServices";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/industries/:slug" element={<Industry />} />
         <Route path="/locations/:state/:city" element={<Location />} />
         <Route path="/services/:service" element={<Service />} />
+        <Route path="/ai-services" element={<AIServices />} />
       </Routes>
     </Router>
   );
