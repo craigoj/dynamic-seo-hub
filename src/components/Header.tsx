@@ -55,6 +55,16 @@ export const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
+                <Link 
+                  to="/ai-services" 
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  <Bot className="h-4 w-4" />
+                  AI Services
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
                 <NavigationMenuTrigger className="flex items-center gap-2">
                   <Factory className="h-4 w-4" />
                   Industries
@@ -75,16 +85,6 @@ export const Header = () => {
                     </div>
                   </div>
                 </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/ai-services" 
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  <Bot className="h-4 w-4" />
-                  AI Services
-                </Link>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
