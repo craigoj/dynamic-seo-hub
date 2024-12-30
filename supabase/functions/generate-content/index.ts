@@ -23,13 +23,13 @@ The content should follow this exact structure and formatting:
 2. Main Content:
 The content must be properly formatted with semantic HTML tags. Here's the exact structure to follow:
 
-<div class="prose max-w-none">
-  <h1>Expert ${service} Services by CTRL Tech${locationText}: Protect Your Business Today!</h1>
-  
-  <p class="introduction">
+<section>
+  <p>
     [Compelling introduction about the importance of ${service} and CTRL Tech's unique value proposition]
   </p>
+</section>
 
+<section>
   <h2>Key Features of Our ${service} Services</h2>
   <ul>
     <li>[Feature 1]</li>
@@ -38,7 +38,9 @@ The content must be properly formatted with semantic HTML tags. Here's the exact
     <li>[Feature 4]</li>
     <li>[Feature 5]</li>
   </ul>
+</section>
 
+<section>
   <h2>Benefits of Choosing CTRL Tech</h2>
   <ul>
     <li>[Benefit 1]</li>
@@ -47,41 +49,30 @@ The content must be properly formatted with semantic HTML tags. Here's the exact
     <li>[Benefit 4]</li>
     <li>[Benefit 5]</li>
   </ul>
+</section>
 
+<section>
   <h2>Frequently Asked Questions</h2>
-  <div class="space-y-6">
-    <div>
-      <h3>[Question 1]</h3>
-      <p>[Answer 1]</p>
-    </div>
-    <div>
-      <h3>[Question 2]</h3>
-      <p>[Answer 2]</p>
-    </div>
-    <div>
-      <h3>[Question 3]</h3>
-      <p>[Answer 3]</p>
-    </div>
-    <div>
-      <h3>[Question 4]</h3>
-      <p>[Answer 4]</p>
-    </div>
-    <div>
-      <h3>[Question 5]</h3>
-      <p>[Answer 5]</p>
-    </div>
+  <div>
+    <h3>[Question 1]</h3>
+    <p>[Answer 1]</p>
   </div>
+  <div>
+    <h3>[Question 2]</h3>
+    <p>[Answer 2]</p>
+  </div>
+  <div>
+    <h3>[Question 3]</h3>
+    <p>[Answer 3]</p>
+  </div>
+</section>
 
+<section>
   <h2>Protect Your Business with CTRL Tech Today!</h2>
   <p>
     [Compelling call to action about ${service} services]
   </p>
-  <a href="/contact" class="cta-button">Schedule a Free Consultation</a>
-
-  <p class="mt-8">
-    Learn more about our <a href="/${service}-best-practices">${service} best practices</a> and how we can secure your business.
-  </p>
-</div>
+</section>
 
 The response must be in JSON format with these exact keys:
 - metaTitle (string)
@@ -89,7 +80,7 @@ The response must be in JSON format with these exact keys:
 - content (HTML formatted string using semantic tags as shown above)
 - features (array of 5 strings)
 - benefits (array of 5 strings)
-- faqs (array of 5 objects with question and answer keys)
+- faqs (array of 3 objects with question and answer keys)
 
 Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.
 Ensure all HTML tags are properly nested and formatted.`
