@@ -6,6 +6,7 @@ import { SolutionSection } from "@/components/landing/SolutionSection";
 import { OutcomeSection } from "@/components/landing/OutcomeSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
+import { ServiceGrid } from "@/components/ServiceGrid";
 
 const Index = () => {
   useEffect(() => {
@@ -62,6 +63,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
+        <ServiceGrid />
         <PainPointsSection />
         <OutcomeSection />
         <SolutionSection />
