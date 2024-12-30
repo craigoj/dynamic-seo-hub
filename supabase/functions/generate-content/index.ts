@@ -17,18 +17,18 @@ const generatePrompt = (service: string, city?: string, industry?: string) => {
 The content should follow this exact structure and formatting:
 
 1. Meta Information:
-- Title: "Expert ${service} Services by CTRL Tech${locationText}: Empower Your Business Today!"
+- Title: "Expert ${service} Services by CTRL Tech${locationText}: Protect Your Business Today!"
 - Description: A compelling description highlighting the benefits and value proposition
 
 2. Main Content:
 The content must be properly formatted with semantic HTML tags. Here's the exact structure to follow:
 
 <div class="prose max-w-none">
-  <h1>Expert ${service} Services by CTRL Tech${locationText}</h1>
+  <h1>Expert ${service} Services by CTRL Tech${locationText}: Protect Your Business Today!</h1>
   
-  <div class="introduction">
-    <p>[Compelling introduction about the importance of ${service}]</p>
-  </div>
+  <p class="introduction">
+    [Compelling introduction about the importance of ${service} and CTRL Tech's unique value proposition]
+  </p>
 
   <h2>Key Features of Our ${service} Services</h2>
   <ul>
@@ -49,24 +49,47 @@ The content must be properly formatted with semantic HTML tags. Here's the exact
   </ul>
 
   <h2>Frequently Asked Questions</h2>
-  <div class="faqs">
-    [Series of questions and answers about ${service}]
+  <div class="space-y-6">
+    <div>
+      <h3>[Question 1]</h3>
+      <p>[Answer 1]</p>
+    </div>
+    <div>
+      <h3>[Question 2]</h3>
+      <p>[Answer 2]</p>
+    </div>
+    <div>
+      <h3>[Question 3]</h3>
+      <p>[Answer 3]</p>
+    </div>
+    <div>
+      <h3>[Question 4]</h3>
+      <p>[Answer 4]</p>
+    </div>
+    <div>
+      <h3>[Question 5]</h3>
+      <p>[Answer 5]</p>
+    </div>
   </div>
 
-  <h2>Transform Your Business with CTRL Tech's ${service} Solutions</h2>
-  <div class="cta">
-    <p>[Compelling call to action]</p>
-    <a href="/contact" class="cta-button">Schedule a Free Consultation</a>
-  </div>
+  <h2>Protect Your Business with CTRL Tech Today!</h2>
+  <p>
+    [Compelling call to action about ${service} services]
+  </p>
+  <a href="/contact" class="cta-button">Schedule a Free Consultation</a>
+
+  <p class="mt-8">
+    Learn more about our <a href="/${service}-best-practices">${service} best practices</a> and how we can secure your business.
+  </p>
 </div>
 
 The response must be in JSON format with these exact keys:
 - metaTitle (string)
 - metaDescription (string)
 - content (HTML formatted string using semantic tags as shown above)
-- features (array of 5-6 strings)
-- benefits (array of 5-6 strings)
-- faqs (array of objects with question and answer keys)
+- features (array of 5 strings)
+- benefits (array of 5 strings)
+- faqs (array of 5 objects with question and answer keys)
 
 Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.
 Ensure all HTML tags are properly nested and formatted.`
