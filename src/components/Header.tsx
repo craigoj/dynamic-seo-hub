@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 
 const services = [
   { title: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
-  { title: "Cloud Solutions", slug: "cloud", description: "Seamless cloud migration and management" },
-  { title: "IT Infrastructure", slug: "infrastructure", description: "Build and maintain robust IT systems" },
-  { title: "Network Management", slug: "network", description: "Ensure optimal network performance" },
-  { title: "Backup & Recovery", slug: "backup", description: "Protect your data with automated solutions" },
-  { title: "IT Consulting", slug: "consulting", description: "Strategic technology planning" }
+  { title: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
+  { title: "IT Infrastructure", slug: "it-infrastructure", description: "Build and maintain robust IT systems" },
+  { title: "Network Management", slug: "network-management", description: "Ensure optimal network performance" },
+  { title: "Backup & Recovery", slug: "backup-recovery", description: "Protect your data with automated solutions" },
+  { title: "IT Consulting", slug: "it-consulting", description: "Strategic technology planning" }
 ];
 
 const industries = [
