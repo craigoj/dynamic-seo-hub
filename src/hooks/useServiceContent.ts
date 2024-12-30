@@ -50,9 +50,15 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
             meta_title: existingContent.meta_title,
             meta_description: existingContent.meta_description,
             content: existingContent.content,
-            features: Array.isArray(existingContent.features) ? existingContent.features : [],
-            benefits: Array.isArray(existingContent.benefits) ? existingContent.benefits : [],
-            faqs: Array.isArray(existingContent.faqs) ? existingContent.faqs : [],
+            features: Array.isArray(existingContent.features) 
+              ? (existingContent.features as string[]) 
+              : [],
+            benefits: Array.isArray(existingContent.benefits) 
+              ? (existingContent.benefits as string[]) 
+              : [],
+            faqs: Array.isArray(existingContent.faqs) 
+              ? (existingContent.faqs as Array<{ question: string; answer: string }>) 
+              : [],
             schema_markup: existingContent.schema_markup
           };
 
@@ -89,9 +95,9 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
             content: generatedContent.content,
             meta_title: generatedContent.metaTitle,
             meta_description: generatedContent.metaDescription,
-            features: generatedContent.features || [],
-            benefits: generatedContent.benefits || [],
-            faqs: generatedContent.faqs || []
+            features: (generatedContent.features || []) as string[],
+            benefits: (generatedContent.benefits || []) as string[],
+            faqs: (generatedContent.faqs || []) as Array<{ question: string; answer: string }>
           });
 
         if (insertError) throw insertError;
