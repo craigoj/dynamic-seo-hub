@@ -74,12 +74,22 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
           state: 'California'
         });
 
+        // Transform the generated content to match the ServiceContent interface
+        const formattedGeneratedContent: ServiceContent = {
+          meta_title: generatedContent.metaTitle,
+          meta_description: generatedContent.metaDescription,
+          content: generatedContent.content,
+          features: generatedContent.features,
+          benefits: generatedContent.benefits,
+          faqs: generatedContent.faqs
+        };
+
         localStorage.setItem(cacheKey, JSON.stringify({
-          data: generatedContent,
+          data: formattedGeneratedContent,
           timestamp: Date.now()
         }));
         
-        setContent(generatedContent);
+        setContent(formattedGeneratedContent);
       } catch (error) {
         console.error("Error fetching/generating content:", error);
         toast({
