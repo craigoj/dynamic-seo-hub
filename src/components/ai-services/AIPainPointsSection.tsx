@@ -1,7 +1,28 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
+import { PainPointImage } from "../PainPointImage";
+
+interface PainPoint {
+  text: string;
+  imageQuery: string;
+}
 
 export const AIPainPointsSection = () => {
+  const painPoints: PainPoint[] = [
+    {
+      text: "You're juggling multiple tools, and none of them talk to each other.",
+      imageQuery: "juggling tasks business stress",
+    },
+    {
+      text: "Your team spends hours on repetitive tasks that should take seconds.",
+      imageQuery: "repetitive work office tired",
+    },
+    {
+      text: "You're paying for features you're not using and leaving efficiency on the table.",
+      imageQuery: "wasted money business",
+    },
+  ];
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -11,15 +32,12 @@ export const AIPainPointsSection = () => {
         </p>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            "You're juggling multiple tools, and none of them talk to each other.",
-            "Your team spends hours on repetitive tasks that should take seconds.",
-            "You're paying for features you're not using and leaving efficiency on the table."
-          ].map((pain, index) => (
+          {painPoints.map((pain, index) => (
             <Card key={index} className="border-none shadow-lg">
               <CardContent className="p-6">
+                <PainPointImage query={pain.imageQuery} />
                 <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-                <p className="text-gray-700">{pain}</p>
+                <p className="text-gray-700">{pain.text}</p>
               </CardContent>
             </Card>
           ))}
