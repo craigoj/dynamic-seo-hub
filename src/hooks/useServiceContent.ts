@@ -50,9 +50,9 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
             meta_title: existingContent.meta_title,
             meta_description: existingContent.meta_description,
             content: existingContent.content,
-            features: existingContent.features,
-            benefits: existingContent.benefits,
-            faqs: existingContent.faqs,
+            features: Array.isArray(existingContent.features) ? existingContent.features : [],
+            benefits: Array.isArray(existingContent.benefits) ? existingContent.benefits : [],
+            faqs: Array.isArray(existingContent.faqs) ? existingContent.faqs : [],
             schema_markup: existingContent.schema_markup
           };
 
@@ -89,9 +89,9 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
             content: generatedContent.content,
             meta_title: generatedContent.metaTitle,
             meta_description: generatedContent.metaDescription,
-            features: generatedContent.features,
-            benefits: generatedContent.benefits,
-            faqs: generatedContent.faqs
+            features: generatedContent.features || [],
+            benefits: generatedContent.benefits || [],
+            faqs: generatedContent.faqs || []
           });
 
         if (insertError) throw insertError;
