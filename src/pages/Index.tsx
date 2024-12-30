@@ -63,10 +63,10 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
-        <ServiceGrid />
         <PainPointsSection />
         <OutcomeSection />
         <SolutionSection />
+        <ServiceGrid />
         <ContactSection />
       </main>
       <Footer />
