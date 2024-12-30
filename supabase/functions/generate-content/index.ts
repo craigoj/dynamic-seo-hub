@@ -43,16 +43,16 @@ serve(async (req) => {
       metaTitle: `Expert ${service} Services by CTRL Tech: Protect Your Business Today!`,
       metaDescription: `Strengthen your business with CTRL Tech's comprehensive ${service} solutions. Safeguard your digital assets and ensure uninterrupted operations. Contact us today!`,
       content: `
-        <main>
+        <div class="space-y-8">
           <section>
-            <p>
+            <p class="text-lg leading-relaxed">
               In today's dynamic business environment, ${service} has become essential for scaling your operations, enhancing security, and improving productivity. CTRL Tech is committed to providing cutting-edge, scalable ${service} services optimized for your unique business needs${city ? ` in ${city}` : ''}.
             </p>
           </section>
           
           <section>
-            <h2>Key Features of Our ${service} Services</h2>
-            <ul>
+            <h2 class="text-2xl font-bold mb-4">Key Features of Our ${service} Services</h2>
+            <ul class="list-disc pl-6 space-y-2">
               <li>24/7 Monitoring and Support</li>
               <li>Proactive Maintenance</li>
               <li>Advanced Security Solutions</li>
@@ -62,8 +62,8 @@ serve(async (req) => {
           </section>
           
           <section>
-            <h2>Benefits of Choosing CTRL Tech</h2>
-            <ul>
+            <h2 class="text-2xl font-bold mb-4">Benefits of Choosing CTRL Tech</h2>
+            <ul class="list-disc pl-6 space-y-2">
               <li>Enhanced Security and Protection</li>
               <li>Improved Operational Efficiency</li>
               <li>Reduced Downtime and Risks</li>
@@ -71,14 +71,7 @@ serve(async (req) => {
               <li>Peace of Mind</li>
             </ul>
           </section>
-          
-          <section>
-            <h2>Protect Your Business with CTRL Tech Today!</h2>
-            <p>
-              Don't let threats disrupt your operations. With CTRL Tech's comprehensive ${service} services${city ? ` in ${city}` : ''}, your business will stay secure, compliant, and efficient. Contact us now for a free consultation and take the first step toward a better future.
-            </p>
-          </section>
-        </main>
+        </div>
       `
     }
 

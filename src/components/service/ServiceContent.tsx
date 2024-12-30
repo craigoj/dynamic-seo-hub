@@ -61,7 +61,7 @@ export const ServiceContent = ({ service, city, industry, content }: ServiceCont
       </header>
       
       <main>
-        <motion.section 
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -70,69 +70,23 @@ export const ServiceContent = ({ service, city, industry, content }: ServiceCont
         />
 
         {content.features && content.features.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-8">Key Features of Our {service} Services</h2>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {content.features.map((feature, index) => (
-                <motion.li 
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-card hover:shadow-md transition-shadow"
-                >
-                  <span className="text-lg">{feature}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </section>
+          <ServiceFeatures features={content.features} />
         )}
 
         {content.benefits && content.benefits.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-8">Benefits of Choosing CTRL Tech</h2>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {content.benefits.map((benefit, index) => (
-                <motion.li 
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-card hover:shadow-md transition-shadow"
-                >
-                  <span className="text-lg">{benefit}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </section>
+          <ServiceBenefits benefits={content.benefits} />
         )}
 
         {content.faqs && content.faqs.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              {content.faqs.map((faq, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
-                  className="p-6 rounded-lg bg-card hover:shadow-md transition-shadow"
-                >
-                  <h3 className="text-xl font-semibold mb-2">{faq.question}</h3>
-                  <p className="text-muted-foreground">{faq.answer}</p>
-                </motion.div>
-              ))}
-            </div>
-          </section>
+          <ServiceFAQs faqs={content.faqs} />
         )}
 
-        <section>
+        <section className="mt-16">
           <h2 className="text-3xl font-bold mb-4">Protect Your Business with CTRL Tech Today!</h2>
           <p className="text-lg text-muted-foreground mb-6">
-            Don't let threats disrupt your operations. With CTRL Tech's comprehensive {service} services, 
-            your business will stay secure, compliant, and efficient. Contact us now for a free consultation 
-            and take the first step toward a better future.
+            Don't let threats disrupt your operations. With CTRL Tech's comprehensive {service} services
+            {city ? ` in ${city}` : ''}, your business will stay secure, compliant, and efficient. 
+            Contact us now for a free consultation and take the first step toward a better future.
           </p>
           <a 
             href="/contact" 
