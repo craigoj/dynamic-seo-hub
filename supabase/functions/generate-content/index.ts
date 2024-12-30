@@ -14,24 +14,41 @@ const generatePrompt = (service: string, city?: string, industry?: string) => {
   
   return `Generate an SEO-optimized service page for CTRL Tech's ${service} services${industryText}${locationText}.
 
-The content should follow this structure:
-1. Meta title and description
-2. Main content with proper HTML formatting
-3. Key features list
-4. Benefits list
-5. FAQs list
+The content should follow this exact structure:
 
-The content should be highly relevant to ${service} services${industryText}${locationText}, focusing on how CTRL Tech helps businesses in this specific context.
-Include specific challenges and solutions related to ${industry || 'businesses'} when it comes to ${service}.
+1. Meta Information:
+- Title should be compelling and include "${service} Services${locationText}"
+- Description should be informative and include key benefits
+
+2. Main Content:
+- Start with a compelling introduction about ${service}
+- Include specific challenges and solutions related to ${industry || 'businesses'}
+- Highlight CTRL Tech's expertise in ${service}
+
+3. Key Features (5-6 items):
+- List specific ${service} features
+- Focus on technical capabilities
+- Include monitoring, protection, and support aspects
+
+4. Benefits (5-6 items):
+- Business advantages
+- Risk mitigation
+- Compliance and security improvements
+
+5. FAQs (4-5 questions):
+- Common questions about ${service}
+- Include pricing, implementation, and support
+- Address industry-specific concerns${industry ? ` for ${industry}` : ''}
 
 The response should be in JSON format with these keys:
-- metaTitle
-- metaDescription
-- content (HTML formatted)
+- metaTitle (string)
+- metaDescription (string)
+- content (HTML formatted string)
 - features (array of strings)
 - benefits (array of strings)
 - faqs (array of objects with question and answer keys)
-`
+
+Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.`
 }
 
 serve(async (req) => {
@@ -56,7 +73,7 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'You are an expert in creating SEO-optimized localized service pages. Generate content that is engaging, relevant, and optimized for search engines.'
+            content: 'You are an expert in creating SEO-optimized service pages. Generate content that is engaging, relevant, and optimized for search engines. Use proper HTML formatting with semantic tags.'
           },
           { role: 'user', content: finalPrompt }
         ],
