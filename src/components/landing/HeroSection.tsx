@@ -12,23 +12,23 @@ export const HeroSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            AI Services That Think Like Your Best Employee
+            Automate Your Business, Simplify Your Life
           </h1>
           <p className="text-xl mb-8 text-blue-100">
-            CTRL Tech transforms businesses with AI automation, empowering small teams to achieve more without hiring more.
+            Designed for businesses with 4-20 employees, CTRL Tech combines IT expertise with AI automation to eliminate inefficiencies and drive growth.
           </p>
           <ul className="space-y-3 mb-8 text-blue-100">
             <li className="flex items-start">
               <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Automate repetitive tasks like data entry and scheduling with AI agents</span>
+              <span>Save time by automating repetitive tasks like email workflows and data entry</span>
             </li>
             <li className="flex items-start">
               <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Enhance productivity with tools that operate 24/7, saving time and money</span>
+              <span>Protect your data with robust cybersecurity and 24/7 monitoring</span>
             </li>
             <li className="flex items-start">
               <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Turn call notes into shareable content effortlessly</span>
+              <span>Streamline operations with IT support that scales as you grow</span>
             </li>
           </ul>
           <Button 
@@ -36,7 +36,7 @@ export const HeroSection = () => {
             onClick={scrollToContact}
             className="bg-white text-blue-600 hover:bg-blue-50"
           >
-            Schedule a free consultation now!
+            Get Started Today
           </Button>
         </div>
       </div>
