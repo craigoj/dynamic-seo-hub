@@ -27,9 +27,10 @@ export const useServiceContent = (
       try {
         setLoading(true);
         
+        const cacheKey = `service_${service}_${city || 'general'}_${industry || 'general'}`;
+        
         // Skip cache if forceRegenerate is true
         if (!forceRegenerate) {
-          const cacheKey = `service_${service}_${city || 'general'}_${industry || 'general'}`;
           const cachedData = localStorage.getItem(cacheKey);
           
           if (cachedData) {
