@@ -14,41 +14,52 @@ const generatePrompt = (service: string, city?: string, industry?: string) => {
   
   return `Generate an SEO-optimized service page for CTRL Tech's ${service} services${industryText}${locationText}.
 
-The content should follow this exact structure:
+The content should follow this exact structure and formatting:
 
 1. Meta Information:
-- Title should be compelling and include "${service} Services${locationText}"
-- Description should be informative and include key benefits
+- Title: "Expert ${service} Services by CTRL Tech${locationText}: Empower Your Business Today!"
+- Description: A compelling description highlighting the benefits and value proposition
 
-2. Main Content:
-- Start with a compelling introduction about ${service}
-- Include specific challenges and solutions related to ${industry || 'businesses'}
-- Highlight CTRL Tech's expertise in ${service}
+2. Main Content (use proper HTML tags):
+- H1 heading with the service title
+- Introduction paragraph about the importance of ${service}
+- Specific challenges and solutions for ${industry || 'businesses'}
+- CTRL Tech's expertise and approach
 
-3. Key Features (5-6 items):
-- List specific ${service} features
-- Focus on technical capabilities
-- Include monitoring, protection, and support aspects
+3. Key Features Section:
+<h2>Key Features of Our ${service} Services</h2>
+<ul>
+  <li>[Feature 1]</li>
+  <li>[Feature 2]</li>
+  ...etc
+</ul>
 
-4. Benefits (5-6 items):
-- Business advantages
-- Risk mitigation
-- Compliance and security improvements
+4. Benefits Section:
+<h2>Benefits of Choosing CTRL Tech</h2>
+<ul>
+  <li>[Benefit 1]</li>
+  <li>[Benefit 2]</li>
+  ...etc
+</ul>
 
-5. FAQs (4-5 questions):
-- Common questions about ${service}
-- Include pricing, implementation, and support
-- Address industry-specific concerns${industry ? ` for ${industry}` : ''}
+5. FAQ Section:
+<h2>Frequently Asked Questions</h2>
+[Series of questions and answers about ${service}]
 
-The response should be in JSON format with these keys:
+6. Call to Action:
+<h2>Transform Your Business with CTRL Tech's ${service} Solutions</h2>
+[Compelling CTA text]
+
+The response must be in JSON format with these exact keys:
 - metaTitle (string)
 - metaDescription (string)
-- content (HTML formatted string)
-- features (array of strings)
-- benefits (array of strings)
+- content (HTML formatted string using semantic tags)
+- features (array of 5-6 strings)
+- benefits (array of 5-6 strings)
 - faqs (array of objects with question and answer keys)
 
-Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.`
+Make the content highly professional, SEO-optimized, and focused on ${service} services${industryText}${locationText}.
+Use proper semantic HTML tags throughout the content.`
 }
 
 serve(async (req) => {
@@ -60,6 +71,8 @@ serve(async (req) => {
     const { prompt, type, service, city, industry } = await req.json()
 
     const finalPrompt = type === 'custom' ? prompt : generatePrompt(service, city, industry)
+
+    console.log('Generating content with prompt:', finalPrompt)
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -73,7 +86,7 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'You are an expert in creating SEO-optimized service pages. Generate content that is engaging, relevant, and optimized for search engines. Use proper HTML formatting with semantic tags.'
+            content: 'You are an expert in creating SEO-optimized service pages. Generate content that is engaging, relevant, and optimized for search engines. Always use proper semantic HTML tags and maintain a consistent structure.' 
           },
           { role: 'user', content: finalPrompt }
         ],
