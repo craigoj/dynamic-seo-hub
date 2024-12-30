@@ -12,7 +12,12 @@ interface ServiceContent {
   schema_markup?: any;
 }
 
-export const useServiceContent = (service?: string, city?: string, industry?: string) => {
+export const useServiceContent = (
+  service?: string, 
+  city?: string, 
+  industry?: string,
+  forceRegenerate: boolean = false
+) => {
   const [content, setContent] = useState<ServiceContent | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -22,54 +27,60 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
       try {
         setLoading(true);
         
-        const cacheKey = `service_${service}_${city || 'general'}_${industry || 'general'}`;
-        const cachedData = localStorage.getItem(cacheKey);
-        
-        if (cachedData) {
-          const { data, timestamp } = JSON.parse(cachedData);
-          // Cache for 24 hours
-          if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
-            setContent(data);
-            setLoading(false);
-            return;
+        // Skip cache if forceRegenerate is true
+        if (!forceRegenerate) {
+          const cacheKey = `service_${service}_${city || 'general'}_${industry || 'general'}`;
+          const cachedData = localStorage.getItem(cacheKey);
+          
+          if (cachedData) {
+            const { data, timestamp } = JSON.parse(cachedData);
+            // Cache for 24 hours
+            if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+              setContent(data);
+              setLoading(false);
+              return;
+            }
           }
         }
         
-        // Check database cache
-        const { data: existingContent, error: fetchError } = await supabase
-          .from("service_page_cache")
-          .select("*")
-          .eq("service", service)
-          .eq("city", city || "general")
-          .maybeSingle();
+        // If forceRegenerate is true, skip database cache check
+        if (!forceRegenerate) {
+          // Check database cache
+          const { data: existingContent, error: fetchError } = await supabase
+            .from("service_page_cache")
+            .select("*")
+            .eq("service", service)
+            .eq("city", city || "general")
+            .maybeSingle();
 
-        if (fetchError) throw fetchError;
+          if (fetchError) throw fetchError;
 
-        if (existingContent) {
-          const formattedContent: ServiceContent = {
-            meta_title: existingContent.meta_title,
-            meta_description: existingContent.meta_description,
-            content: existingContent.content,
-            features: Array.isArray(existingContent.features) 
-              ? (existingContent.features as string[]) 
-              : [],
-            benefits: Array.isArray(existingContent.benefits) 
-              ? (existingContent.benefits as string[]) 
-              : [],
-            faqs: Array.isArray(existingContent.faqs) 
-              ? (existingContent.faqs as Array<{ question: string; answer: string }>) 
-              : [],
-            schema_markup: existingContent.schema_markup
-          };
+          if (existingContent) {
+            const formattedContent: ServiceContent = {
+              meta_title: existingContent.meta_title,
+              meta_description: existingContent.meta_description,
+              content: existingContent.content,
+              features: Array.isArray(existingContent.features) 
+                ? (existingContent.features as string[]) 
+                : [],
+              benefits: Array.isArray(existingContent.benefits) 
+                ? (existingContent.benefits as string[]) 
+                : [],
+              faqs: Array.isArray(existingContent.faqs) 
+                ? (existingContent.faqs as Array<{ question: string; answer: string }>) 
+                : [],
+              schema_markup: existingContent.schema_markup
+            };
 
-          localStorage.setItem(cacheKey, JSON.stringify({
-            data: formattedContent,
-            timestamp: Date.now()
-          }));
-          
-          setContent(formattedContent);
-          setLoading(false);
-          return;
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: formattedContent,
+              timestamp: Date.now()
+            }));
+            
+            setContent(formattedContent);
+            setLoading(false);
+            return;
+          }
         }
 
         // Generate new content
@@ -86,21 +97,39 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
 
         const generatedContent = generatedData.generatedText;
 
-        // Store in database cache
-        const { error: insertError } = await supabase
-          .from("service_page_cache")
-          .insert({
-            service: service,
-            city: city || "general",
-            content: generatedContent.content,
-            meta_title: generatedContent.metaTitle,
-            meta_description: generatedContent.metaDescription,
-            features: (generatedContent.features || []) as string[],
-            benefits: (generatedContent.benefits || []) as string[],
-            faqs: (generatedContent.faqs || []) as Array<{ question: string; answer: string }>
-          });
+        // If forceRegenerate is true, update existing content instead of inserting
+        if (forceRegenerate) {
+          const { error: updateError } = await supabase
+            .from("service_page_cache")
+            .update({
+              content: generatedContent.content,
+              meta_title: generatedContent.metaTitle,
+              meta_description: generatedContent.metaDescription,
+              features: (generatedContent.features || []) as string[],
+              benefits: (generatedContent.benefits || []) as string[],
+              faqs: (generatedContent.faqs || []) as Array<{ question: string; answer: string }>
+            })
+            .eq("service", service)
+            .eq("city", city || "general");
 
-        if (insertError) throw insertError;
+          if (updateError) throw updateError;
+        } else {
+          // Store in database cache
+          const { error: insertError } = await supabase
+            .from("service_page_cache")
+            .insert({
+              service: service,
+              city: city || "general",
+              content: generatedContent.content,
+              meta_title: generatedContent.metaTitle,
+              meta_description: generatedContent.metaDescription,
+              features: (generatedContent.features || []) as string[],
+              benefits: (generatedContent.benefits || []) as string[],
+              faqs: (generatedContent.faqs || []) as Array<{ question: string; answer: string }>
+            });
+
+          if (insertError) throw insertError;
+        }
 
         // Store in local cache
         localStorage.setItem(cacheKey, JSON.stringify({
@@ -124,7 +153,7 @@ export const useServiceContent = (service?: string, city?: string, industry?: st
     if (service) {
       fetchOrGenerateContent();
     }
-  }, [service, city, industry]);
+  }, [service, city, industry, forceRegenerate]);
 
   return { content, loading };
 };
