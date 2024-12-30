@@ -1,27 +1,27 @@
 import { useEffect } from "react";
 import { Header } from "@/components/Header";
-import { HeroSection } from "@/components/HeroSection";
-import { ServicesSection } from "@/components/ServicesSection";
-import { IndustriesSection } from "@/components/IndustriesSection";
-import { LocationsSection } from "@/components/LocationsSection";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { PainPointsSection } from "@/components/landing/PainPointsSection";
+import { SolutionSection } from "@/components/landing/SolutionSection";
+import { OutcomeSection } from "@/components/landing/OutcomeSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
   useEffect(() => {
     // Update meta tags
-    document.title = "Enterprise IT Solutions | Nationwide Managed Services";
+    document.title = "CTRL Tech | IT & AI Automation Services for Small Business";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Nationwide managed IT services tailored to your industry. Experience reliable, secure, and scalable technology solutions for your business.");
+      metaDescription.setAttribute("content", "CTRL Tech combines IT expertise with AI automation to eliminate inefficiencies and drive growth for businesses with 4-20 employees.");
     }
 
     // Add schema markup
     const schema = {
       "@context": "https://schema.org",
       "@type": "ITService",
-      "name": "Your Company IT Solutions",
-      "description": "Nationwide managed IT services tailored to your industry",
+      "name": "CTRL Tech",
+      "description": "IT and AI Automation Services for Small Business",
       "areaServed": "United States",
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
@@ -31,16 +31,16 @@ const Index = () => {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Cybersecurity",
-              "description": "Enterprise-grade security solutions and 24/7 monitoring"
+              "name": "AI Automation",
+              "description": "Custom AI automation solutions for small businesses"
             }
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Cloud Solutions",
-              "description": "Cloud migration and management services"
+              "name": "IT Support",
+              "description": "24/7 IT support and monitoring"
             }
           }
         ]
@@ -60,11 +60,13 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <HeroSection />
-      <ServicesSection />
-      <IndustriesSection />
-      <LocationsSection />
-      <ContactSection />
+      <main>
+        <HeroSection />
+        <PainPointsSection />
+        <OutcomeSection />
+        <SolutionSection />
+        <ContactSection />
+      </main>
       <Footer />
     </div>
   );
