@@ -46,6 +46,34 @@ const Location = () => {
               metaDescription.setAttribute("content", existingData.meta_description);
             }
           }
+
+          // Add schema markup
+          const schemaScript = document.createElement('script');
+          schemaScript.type = 'application/ld+json';
+          const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": "CTRL Tech",
+            "description": existingData.meta_description,
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": city,
+              "addressRegion": state,
+              "addressCountry": "US"
+            },
+            "url": `https://www.ctrltech.com/locations/${state}/${city}`,
+            "telephone": "+1-800-123-4567",
+            "areaServed": {
+              "@type": "City",
+              "name": city
+            },
+            "serviceArea": {
+              "@type": "State",
+              "name": state
+            }
+          };
+          schemaScript.textContent = JSON.stringify(schemaData);
+          document.head.appendChild(schemaScript);
         } else {
           console.log("No existing data found, generating content...");
           
