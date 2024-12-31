@@ -11,6 +11,17 @@ interface SitemapData {
   services: Array<string>;
 }
 
+const coreServices = [
+  { slug: "it-support", name: "IT Support" },
+  { slug: "cybersecurity", name: "Cybersecurity" },
+  { slug: "cloud-solutions", name: "Cloud Solutions" },
+  { slug: "network-management", name: "Network Management" },
+  { slug: "ai-automation", name: "AI Automation" },
+  { slug: "data-backup", name: "Data Backup" },
+  { slug: "it-consulting", name: "IT Consulting" },
+  { slug: "managed-services", name: "Managed Services" },
+];
+
 const Sitemap = () => {
   const [data, setData] = useState<SitemapData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,20 +39,10 @@ const Sitemap = () => {
           .from("locations")
           .select("city, state");
 
-        // Define core services
-        const services = [
-          "it-support",
-          "cybersecurity",
-          "cloud-solutions",
-          "network-management",
-          "ai-automation",
-          "data-backup",
-        ];
-
         setData({
           industries: industries || [],
           locations: locations || [],
-          services,
+          services: coreServices.map(service => service.slug),
         });
       } catch (error) {
         console.error("Error fetching sitemap data:", error);
@@ -92,17 +93,17 @@ const Sitemap = () => {
             </ul>
           </section>
 
-          {/* Services */}
+          {/* Core Services */}
           <section>
             <h2 className="text-xl font-semibold mb-4">Services</h2>
             <ul className="space-y-2">
-              {data?.services.map((service) => (
-                <li key={service}>
+              {coreServices.map((service) => (
+                <li key={service.slug}>
                   <Link 
-                    to={`/services/${service}`}
+                    to={`/services/${service.slug}`}
                     className="text-blue-600 hover:underline"
                   >
-                    {service.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                    {service.name}
                   </Link>
                 </li>
               ))}
@@ -126,18 +127,36 @@ const Sitemap = () => {
             </ul>
           </section>
 
-          {/* Locations */}
+          {/* Location-Based Services */}
           <section className="md:col-span-2 lg:col-span-3">
-            <h2 className="text-xl font-semibold mb-4">Locations</h2>
+            <h2 className="text-xl font-semibold mb-4">Location-Based Services</h2>
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {data?.locations.map((location) => (
-                <Link 
-                  key={`${location.state}-${location.city}`}
-                  to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {location.city}, {location.state}
-                </Link>
+                <div key={`${location.state}-${location.city}`} className="space-y-2">
+                  <h3 className="font-medium text-gray-700">{location.city}, {location.state}</h3>
+                  <ul className="space-y-1 pl-4">
+                    {coreServices.map((service) => (
+                      <li key={`${location.city}-${service.slug}`}>
+                        <Link 
+                          to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}/services/${service.slug}`}
+                          className="text-blue-600 hover:underline text-sm"
+                        >
+                          {service.name} in {location.city}
+                        </Link>
+                      </li>
+                    ))}
+                    {data.industries.map((industry) => (
+                      <li key={`${location.city}-${industry.slug}`}>
+                        <Link 
+                          to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}/industries/${industry.slug}`}
+                          className="text-blue-600 hover:underline text-sm"
+                        >
+                          {industry.name} IT Services in {location.city}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </section>
