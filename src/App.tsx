@@ -7,6 +7,7 @@ import Services from "./pages/Services";
 import Industries from "./pages/Industries";
 import Locations from "./pages/Locations";
 import AIServices from "./pages/AIServices";
+import Sitemap from "./pages/Sitemap";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/services/:service" element={<Service />} />
         <Route path="/ai-services" element={<AIServices />} />
+        <Route path="/sitemap" element={<Sitemap />} />
       </Routes>
     </Router>
   );

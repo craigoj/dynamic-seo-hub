@@ -32,6 +32,7 @@ export const Footer = () => {
               <li><a href="/contact" className="hover:text-white">Contact</a></li>
               <li><a href="/industries" className="hover:text-white">Industries</a></li>
               <li><a href="/admin-login" className="hover:text-white">Admin Login</a></li>
+              <li><a href="/sitemap" className="hover:text-white">Sitemap</a></li>
             </ul>
           </div>
         </div>
