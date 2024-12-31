@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
@@ -46,7 +46,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a professional content writer for ${COMPANY_NAME}, an IT services and AI automation company. Create engaging, SEO-optimized content for our location pages.`
+            content: `You are a professional content writer for ${COMPANY_NAME}, an IT services and AI automation company. Create engaging, SEO-optimized content for our location pages. Format the content with responsive HTML classes using Tailwind CSS.`
           },
           {
             role: "user",
@@ -56,7 +56,10 @@ serve(async (req) => {
             3. Local business challenges
             4. Why choose us section
             5. Generic testimonials (2-3)
-            Focus on local business challenges and how we solve them.`
+            Format the content with proper HTML structure and Tailwind CSS classes for responsive design.
+            Use proper heading hierarchy (h2, h3, etc).
+            Ensure text is readable on both mobile and desktop.
+            Include proper spacing and padding.`
           }
         ]
       })
@@ -68,7 +71,14 @@ serve(async (req) => {
     }
 
     const aiResponse = await response.json();
-    const generatedContent = aiResponse.choices[0].message.content;
+    let generatedContent = aiResponse.choices[0].message.content;
+
+    // Wrap the content in responsive container classes if not already present
+    if (!generatedContent.includes('class="')) {
+      generatedContent = `<div class="prose max-w-none mx-auto px-4 sm:px-6 lg:px-8 space-y-8 md:space-y-12">
+        ${generatedContent}
+      </div>`;
+    }
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
