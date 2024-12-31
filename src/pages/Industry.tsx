@@ -13,7 +13,7 @@ interface Industry {
   description: string;
   meta_title: string;
   meta_description: string;
-  content: string;
+  content?: string; // Make content optional since it might not exist in DB yet
   schema_markup: any;
 }
 
@@ -49,7 +49,16 @@ const Industry = () => {
           if (generateError) throw generateError;
           setIndustry(generatedData);
         } else {
-          setIndustry(existingData);
+          // Convert existing data to match Industry interface
+          const industryData: Industry = {
+            name: existingData.name,
+            description: existingData.description,
+            meta_title: existingData.meta_title,
+            meta_description: existingData.meta_description,
+            content: existingData.content || '',
+            schema_markup: existingData.schema_markup
+          };
+          setIndustry(industryData);
         }
 
         // Update meta tags and schema
@@ -115,7 +124,7 @@ const Industry = () => {
         <Header />
         <main className="flex-grow">
           <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-4">Industry Not Found</h1>
+            <h1 className="text-4xl font-bold mb-4">Industry Not Found</h1>
             <p>Sorry, we couldn't find information for this industry.</p>
           </div>
         </main>
@@ -124,22 +133,31 @@ const Industry = () => {
     );
   }
 
-  const content = JSON.parse(industry.content);
+  const content = industry.content ? JSON.parse(industry.content) : null;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          <div dangerouslySetInnerHTML={{ __html: content.introduction }} />
-          <div dangerouslySetInnerHTML={{ __html: content.challenges }} />
-          <div dangerouslySetInnerHTML={{ __html: content.solutions }} />
-          <div dangerouslySetInnerHTML={{ __html: content.benefits }} />
-          <div dangerouslySetInnerHTML={{ __html: content.cta }} />
+          {content ? (
+            <>
+              <div dangerouslySetInnerHTML={{ __html: content.introduction }} />
+              <div dangerouslySetInnerHTML={{ __html: content.challenges }} />
+              <div dangerouslySetInnerHTML={{ __html: content.solutions }} />
+              <div dangerouslySetInnerHTML={{ __html: content.benefits }} />
+              <div dangerouslySetInnerHTML={{ __html: content.cta }} />
+            </>
+          ) : (
+            <div className="prose prose-lg max-w-none">
+              <h1 className="text-4xl font-bold mb-6">{industry.name}</h1>
+              <p className="text-xl mb-8">{industry.description}</p>
+            </div>
+          )}
           
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
-            <LeadForm industry={industry.name} />
+            <LeadForm />
           </section>
         </div>
         <LocationLinks />
