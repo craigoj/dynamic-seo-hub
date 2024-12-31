@@ -62,6 +62,7 @@ export type Database = {
       }
       industries: {
         Row: {
+          content: string | null
           created_at: string
           description: string
           id: string
@@ -73,6 +74,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          content?: string | null
           created_at?: string
           description: string
           id?: string
@@ -84,6 +86,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          content?: string | null
           created_at?: string
           description?: string
           id?: string

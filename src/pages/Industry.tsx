@@ -13,7 +13,7 @@ interface Industry {
   description: string;
   meta_title: string;
   meta_description: string;
-  content?: string; // Make content optional since it might not exist in DB yet
+  content?: string | null; // Make content optional and nullable
   schema_markup: any;
 }
 
@@ -55,7 +55,7 @@ const Industry = () => {
             description: existingData.description,
             meta_title: existingData.meta_title,
             meta_description: existingData.meta_description,
-            content: existingData.content || '',
+            content: existingData.content,
             schema_markup: existingData.schema_markup
           };
           setIndustry(industryData);
