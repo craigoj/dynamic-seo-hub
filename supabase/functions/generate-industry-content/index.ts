@@ -10,7 +10,7 @@ const corsHeaders = {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -29,6 +29,7 @@ serve(async (req) => {
       .replace(/^education$/, 'education-and-non-profits')
       .replace(/^hospitality$/, 'hospitality-and-travel')
       .replace(/^local-government$/, 'local-governments')
+      .replace(/^legal$/, 'professional-services')
     
     console.log('Normalized slug:', normalizedSlug)
     console.log('Available industries:', Object.keys(industryData))
