@@ -54,7 +54,8 @@ const Sitemap = () => {
         // Fetch industries
         const { data: industries } = await supabase
           .from("industries")
-          .select("slug, name");
+          .select("slug, name")
+          .order('name');  // Order industries alphabetically
 
         setData({
           industries: industries || [],
