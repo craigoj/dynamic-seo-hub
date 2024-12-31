@@ -8,7 +8,9 @@ const locations = {
     "Cincinnati",
     "Toledo",
     "Akron",
-    "Dayton"
+    "Dayton",
+    "Parma",
+    "Canton"
   ],
   Virginia: [
     "Richmond",
@@ -16,7 +18,9 @@ const locations = {
     "Norfolk",
     "Chesapeake",
     "Arlington",
-    "Alexandria"
+    "Alexandria",
+    "Roanoke",
+    "Lynchburg"
   ]
 };
 
