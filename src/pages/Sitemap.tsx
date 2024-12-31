@@ -44,6 +44,9 @@ const allLocations = [
   { city: "Canton", state: "Ohio" },
 ];
 
+// Get unique states from locations
+const states = [...new Set(allLocations.map(location => location.state))];
+
 const Sitemap = () => {
   const [data, setData] = useState<SitemapData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -145,6 +148,37 @@ const Sitemap = () => {
             </ul>
           </section>
 
+          {/* State Pages */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">State Pages</h2>
+            <ul className="space-y-2">
+              {states.map((state) => (
+                <li key={state}>
+                  <Link 
+                    to={`/locations/${state}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {state}
+                  </Link>
+                  <ul className="ml-4 mt-2 space-y-1">
+                    {allLocations
+                      .filter(location => location.state === state)
+                      .map(location => (
+                        <li key={`${location.state}-${location.city}`}>
+                          <Link 
+                            to={`/locations/${location.state}/${location.city}`}
+                            className="text-blue-600 hover:underline text-sm"
+                          >
+                            {location.city}
+                          </Link>
+                        </li>
+                      ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </section>
+
           {/* Location-Based Services */}
           <section className="md:col-span-2 lg:col-span-3">
             <h2 className="text-xl font-semibold mb-4">Location-Based Services</h2>
@@ -153,7 +187,7 @@ const Sitemap = () => {
                 <div key={`${location.state}-${location.city}`} className="space-y-2">
                   <h3 className="font-medium text-gray-700">
                     <Link 
-                      to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}`}
+                      to={`/locations/${location.state}/${location.city}`}
                       className="text-blue-600 hover:underline"
                     >
                       {location.city}, {location.state}
@@ -163,20 +197,10 @@ const Sitemap = () => {
                     {coreServices.map((service) => (
                       <li key={`${location.city}-${service.slug}`}>
                         <Link 
-                          to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}/services/${service.slug}`}
+                          to={`/services/${service.slug}/${location.state}/${location.city}`}
                           className="text-blue-600 hover:underline text-sm"
                         >
                           {service.name} in {location.city}
-                        </Link>
-                      </li>
-                    ))}
-                    {data.industries.map((industry) => (
-                      <li key={`${location.city}-${industry.slug}`}>
-                        <Link 
-                          to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}/industries/${industry.slug}`}
-                          className="text-blue-600 hover:underline text-sm"
-                        >
-                          {industry.name} IT Services in {location.city}
                         </Link>
                       </li>
                     ))}
