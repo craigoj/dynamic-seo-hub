@@ -135,6 +135,54 @@ export type Database = {
         }
         Relationships: []
       }
+      location_service_content: {
+        Row: {
+          benefits: Json | null
+          city: string
+          content: string
+          created_at: string
+          faqs: Json | null
+          features: Json | null
+          id: string
+          meta_description: string
+          meta_title: string
+          schema_markup: Json | null
+          service: string
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json | null
+          city: string
+          content: string
+          created_at?: string
+          faqs?: Json | null
+          features?: Json | null
+          id?: string
+          meta_description: string
+          meta_title: string
+          schema_markup?: Json | null
+          service: string
+          state: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json | null
+          city?: string
+          content?: string
+          created_at?: string
+          faqs?: Json | null
+          features?: Json | null
+          id?: string
+          meta_description?: string
+          meta_title?: string
+          schema_markup?: Json | null
+          service?: string
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           city: string
