@@ -21,13 +21,13 @@ serve(async (req) => {
     const normalizedSlug = industry.toLowerCase()
       .replace(/\s+/g, '-')
       // Handle special cases
+      .replace(/^manufacturing$/, 'manufacturing-and-logistics')
       .replace(/^retail$/, 'retail-and-ecommerce')
       .replace(/^healthcare$/, 'healthcare-and-wellness')
       .replace(/^trades$/, 'trades-and-home-services')
       .replace(/^technology$/, 'technology-and-startups')
       .replace(/^education$/, 'education-and-non-profits')
       .replace(/^hospitality$/, 'hospitality-and-travel')
-      .replace(/^manufacturing$/, 'manufacturing-and-logistics')
       .replace(/^local-government$/, 'local-governments')
     
     console.log('Normalized slug:', normalizedSlug)

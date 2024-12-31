@@ -1,6 +1,7 @@
 import { professionalServices } from './industries/professional.ts';
 import { healthcare } from './industries/healthcare.ts';
 import { retail } from './industries/retail.ts';
+import { manufacturing } from './industries/manufacturing.ts';
 
 export interface IndustryContent {
   name: string;
@@ -12,5 +13,6 @@ export interface IndustryContent {
 export const industryData: Record<string, IndustryContent> = {
   "professional-services": professionalServices,
   "healthcare-and-wellness": healthcare,
-  "retail-and-ecommerce": retail
+  "retail-and-ecommerce": retail,
+  "manufacturing-and-logistics": manufacturing
 };
