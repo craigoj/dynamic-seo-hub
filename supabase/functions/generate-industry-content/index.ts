@@ -18,11 +18,23 @@ serve(async (req) => {
     console.log('Generating content for industry:', industry)
 
     // Convert industry slug to the format used in industryData
-    const normalizedSlug = industry.toLowerCase().replace(/\s+/g, '-')
+    const normalizedSlug = industry.toLowerCase()
+      .replace(/\s+/g, '-')
+      // Handle special cases
+      .replace(/^retail$/, 'retail-and-ecommerce')
+      .replace(/^healthcare$/, 'healthcare-and-wellness')
+      .replace(/^trades$/, 'trades-and-home-services')
+      .replace(/^technology$/, 'technology-and-startups')
+      .replace(/^education$/, 'education-and-non-profits')
+      .replace(/^hospitality$/, 'hospitality-and-travel')
+      .replace(/^manufacturing$/, 'manufacturing-and-logistics')
+      .replace(/^local-government$/, 'local-governments')
+    
+    console.log('Normalized slug:', normalizedSlug)
+    console.log('Available industries:', Object.keys(industryData))
     
     if (!industry || !industryData[normalizedSlug]) {
       console.error('Invalid industry specified:', industry, 'Normalized slug:', normalizedSlug)
-      console.error('Available industries:', Object.keys(industryData))
       throw new Error('Invalid industry specified')
     }
 

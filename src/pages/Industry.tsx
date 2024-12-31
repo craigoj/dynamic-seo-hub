@@ -13,9 +13,21 @@ interface Industry {
   description: string;
   meta_title: string;
   meta_description: string;
-  content?: string | null; // Make content optional and nullable
+  content?: string | null;
   schema_markup: any;
 }
+
+// Map short URLs to full industry slugs
+const industrySlugMap: Record<string, string> = {
+  'retail': 'retail-and-ecommerce',
+  'healthcare': 'healthcare-and-wellness',
+  'trades': 'trades-and-home-services',
+  'technology': 'technology-and-startups',
+  'education': 'education-and-non-profits',
+  'hospitality': 'hospitality-and-travel',
+  'manufacturing': 'manufacturing-and-logistics',
+  'local-government': 'local-governments'
+};
 
 const Industry = () => {
   const { slug } = useParams();
@@ -28,11 +40,15 @@ const Industry = () => {
       try {
         setLoading(true);
         
+        // Map the URL slug to the full industry slug if needed
+        const fullSlug = industrySlugMap[slug as string] || slug;
+        console.log('Fetching industry with slug:', fullSlug);
+        
         // First try to fetch existing content
         const { data: existingData, error: fetchError } = await supabase
           .from("industries")
           .select("*")
-          .eq("slug", slug)
+          .eq("slug", fullSlug)
           .maybeSingle();
 
         if (fetchError) throw fetchError;
@@ -42,14 +58,13 @@ const Industry = () => {
           const { data: generatedData, error: generateError } = await supabase.functions.invoke(
             'generate-industry-content',
             {
-              body: { industry: slug },
+              body: { industry: fullSlug },
             }
           );
 
           if (generateError) throw generateError;
           setIndustry(generatedData);
         } else {
-          // Convert existing data to match Industry interface
           const industryData: Industry = {
             name: existingData.name,
             description: existingData.description,
