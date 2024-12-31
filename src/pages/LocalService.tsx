@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ContactSection } from "@/components/ContactSection";
 import { ServiceContent } from "@/components/ServiceContent";
+import { PageBreadcrumbs } from "@/components/navigation/PageBreadcrumbs";
 import { useServiceContent } from "@/hooks/useServiceContent";
 import { injectSchemaMarkup } from "@/utils/schemaMarkup";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,13 @@ export default function LocalService() {
       return injectSchemaMarkup(service, city, content.meta_description, content.faqs);
     }
   }, [content, service, city]);
+
+  const breadcrumbItems = [
+    { label: "Services", href: "/services" },
+    { label: service || "", href: `/services/${service}` },
+    { label: state || "", href: `/locations/${state}` },
+    { label: city || "" }
+  ];
 
   if (loading) {
     return (
@@ -79,6 +87,8 @@ export default function LocalService() {
         <meta name="description" content={content.meta_description} />
 
         <div className="container mx-auto px-4 py-12">
+          <PageBreadcrumbs items={breadcrumbItems} />
+          
           {isAdmin && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
