@@ -1,36 +1,75 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Industry from "./pages/Industry";
-import Location from "./pages/Location";
-import Service from "./pages/Service";
-import Services from "./pages/Services";
-import Industries from "./pages/Industries";
-import Locations from "./pages/Locations";
-import AIServices from "./pages/AIServices";
-import Sitemap from "./pages/Sitemap";
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Index from "@/pages/Index";
+import Services from "@/pages/Services";
+import Service from "@/pages/Service";
+import Industries from "@/pages/Industries";
+import Industry from "@/pages/Industry";
+import Locations from "@/pages/Locations";
+import Location from "@/pages/Location";
+import StateLocation from "@/pages/StateLocation";
 import LocalService from "@/pages/LocalService";
+import AIServices from "@/pages/AIServices";
+import Admin from "@/pages/Admin";
+import AdminLogin from "@/pages/AdminLogin";
+import Sitemap from "@/pages/Sitemap";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Index />,
+  },
+  {
+    path: "/services",
+    element: <Services />,
+  },
+  {
+    path: "/services/:service",
+    element: <Service />,
+  },
+  {
+    path: "/services/:service/:state/:city",
+    element: <LocalService />,
+  },
+  {
+    path: "/industries",
+    element: <Industries />,
+  },
+  {
+    path: "/industries/:industry",
+    element: <Industry />,
+  },
+  {
+    path: "/locations",
+    element: <Locations />,
+  },
+  {
+    path: "/locations/:state",
+    element: <StateLocation />,
+  },
+  {
+    path: "/locations/:state/:city",
+    element: <Location />,
+  },
+  {
+    path: "/ai-services",
+    element: <AIServices />,
+  },
+  {
+    path: "/admin",
+    element: <Admin />,
+  },
+  {
+    path: "/admin/login",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/sitemap",
+    element: <Sitemap />,
+  },
+]);
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-
-{/* Add this route inside your Routes component */}
-<Route path="/services/:service/:state/:city" element={<LocalService />} />
-
-        <Route path="/" element={<Index />} />
-        <Route path="/industries" element={<Industries />} />
-        <Route path="/industries/:slug" element={<Industry />} />
-        <Route path="/locations" element={<Locations />} />
-        <Route path="/locations/:state/:city" element={<Location />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/services/:service" element={<Service />} />
-        <Route path="/ai-services" element={<AIServices />} />
-        <Route path="/sitemap" element={<Sitemap />} />
-      </Routes>
-    </Router>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
