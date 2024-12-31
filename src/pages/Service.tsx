@@ -10,11 +10,30 @@ import { injectSchemaMarkup } from "@/utils/schemaMarkup";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Service() {
   const { service, city, industry } = useParams();
   const [forceRegenerate, setForceRegenerate] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { content, loading } = useServiceContent(service, city, industry, forceRegenerate);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: adminProfile } = await supabase
+          .from('admin_profiles')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single();
+        
+        setIsAdmin(adminProfile?.is_admin || false);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   useEffect(() => {
     if (content?.meta_description && service) {
@@ -58,21 +77,23 @@ export default function Service() {
         <meta name="description" content={content.meta_description} />
 
         <div className="container mx-auto px-4 py-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex justify-end mb-6"
-          >
-            <Button 
-              onClick={handleRegenerateContent}
-              variant="outline"
-              className="flex items-center gap-2 hover:shadow-md transition-shadow"
+          {isAdmin && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex justify-end mb-6"
             >
-              <RefreshCw className="h-4 w-4" />
-              Regenerate Content
-            </Button>
-          </motion.div>
+              <Button 
+                onClick={handleRegenerateContent}
+                variant="outline"
+                className="flex items-center gap-2 hover:shadow-md transition-shadow"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Regenerate Content
+              </Button>
+            </motion.div>
+          )}
           
           <ServiceContent 
             service={service}
