@@ -1,4 +1,4 @@
-import { IndustryContent } from './industryData';
+import { IndustryContent } from './industryData.ts';
 
 export const generateContent = (industry: string, industryInfo: IndustryContent) => {
   const metaTitle = `${industryInfo.name} IT Services & AI Solutions - CTRL Tech`;
