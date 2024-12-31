@@ -9,10 +9,16 @@ import Locations from "./pages/Locations";
 import AIServices from "./pages/AIServices";
 import Sitemap from "./pages/Sitemap";
 
+import LocalService from "@/pages/LocalService";
+
 function App() {
   return (
     <Router>
       <Routes>
+
+{/* Add this route inside your Routes component */}
+<Route path="/services/:service/:state/:city" element={<LocalService />} />
+
         <Route path="/" element={<Index />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:slug" element={<Industry />} />
