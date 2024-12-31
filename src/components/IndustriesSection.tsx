@@ -116,25 +116,27 @@ const industries = [
 
 export const IndustriesSection = () => {
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-4">Industries We Serve</h2>
-        <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+    <section className="py-12 md:py-20 bg-gray-50">
+      <div className="container mx-auto px-4 md:px-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3 md:mb-4">Industries We Serve</h2>
+        <p className="text-base md:text-lg text-gray-600 text-center mb-8 md:mb-12 max-w-2xl mx-auto">
           CTRL Tech provides tailored AI solutions across diverse industries, helping businesses optimize their operations and grow efficiently.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {industries.map((industry) => (
             <Card key={industry.title} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle>{industry.title}</CardTitle>
-                <CardDescription>{industry.description}</CardDescription>
+              <CardHeader className="space-y-1 md:space-y-2">
+                <CardTitle className="text-xl md:text-2xl">{industry.title}</CardTitle>
+                <CardDescription className="text-sm md:text-base">{industry.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <Accordion type="single" collapsible>
+                <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="sub-industries">
-                    <AccordionTrigger>View Sub-Industries</AccordionTrigger>
+                    <AccordionTrigger className="text-sm md:text-base">
+                      View Sub-Industries
+                    </AccordionTrigger>
                     <AccordionContent>
-                      <ul className="space-y-2 text-sm text-gray-600">
+                      <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base text-gray-600">
                         {industry.subIndustries.map((subIndustry, index) => (
                           <li key={index} className="list-disc ml-4">
                             {subIndustry}
