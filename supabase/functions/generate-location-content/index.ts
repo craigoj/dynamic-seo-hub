@@ -60,42 +60,66 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Store the generated content
-    const { data, error } = await supabase
+    // First check if content exists for this city/state
+    const { data: existingContent } = await supabase
       .from("city_content")
-      .upsert({
-        city,
-        state,
-        content: {
-          main: generatedContent,
-          services: [
-            { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
-            { name: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
-            { name: "IT Support", slug: "it-support", description: "24/7 technical support and maintenance" },
-            { name: "AI Automation", slug: "ai-automation", description: "Streamline operations with AI" },
-            { name: "Network Management", slug: "network-management", description: "Optimize your network infrastructure" }
-          ],
-          industries: [
-            { name: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
-            { name: "Manufacturing", slug: "manufacturing", description: "Smart manufacturing solutions" },
-            { name: "Finance", slug: "finance", description: "Secure financial technology" },
-            { name: "Retail", slug: "retail", description: "Modern retail IT solutions" },
-            { name: "Legal", slug: "legal", description: "Legal tech solutions" }
-          ]
-        },
-        meta_title: `${COMPANY_NAME} IT Services & AI Automation in ${city}, ${state}`,
-        meta_description: `Enhance your ${city} business operations with ${COMPANY_NAME}'s IT services and AI automation solutions. Expert local support, 24/7 service, and innovative technology solutions.`
-      })
-      .select()
+      .select("id")
+      .eq("city", city)
+      .eq("state", state)
       .single();
 
-    if (error) {
-      console.error("Database error:", error);
-      throw error;
+    let result;
+    const contentData = {
+      city,
+      state,
+      content: {
+        main: generatedContent,
+        services: [
+          { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
+          { name: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
+          { name: "IT Support", slug: "it-support", description: "24/7 technical support and maintenance" },
+          { name: "AI Automation", slug: "ai-automation", description: "Streamline operations with AI" },
+          { name: "Network Management", slug: "network-management", description: "Optimize your network infrastructure" }
+        ],
+        industries: [
+          { name: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
+          { name: "Manufacturing", slug: "manufacturing", description: "Smart manufacturing solutions" },
+          { name: "Finance", slug: "finance", description: "Secure financial technology" },
+          { name: "Retail", slug: "retail", description: "Modern retail IT solutions" },
+          { name: "Legal", slug: "legal", description: "Legal tech solutions" }
+        ]
+      },
+      meta_title: `${COMPANY_NAME} IT Services & AI Automation in ${city}, ${state}`,
+      meta_description: `Enhance your ${city} business operations with ${COMPANY_NAME}'s IT services and AI automation solutions. Expert local support, 24/7 service, and innovative technology solutions.`
+    };
+
+    if (existingContent) {
+      // Update existing content
+      console.log(`Updating existing content for ${city}, ${state}`);
+      const { data, error } = await supabase
+        .from("city_content")
+        .update(contentData)
+        .eq("id", existingContent.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      result = data;
+    } else {
+      // Insert new content
+      console.log(`Creating new content for ${city}, ${state}`);
+      const { data, error } = await supabase
+        .from("city_content")
+        .insert(contentData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      result = data;
     }
 
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify(result),
       {
         headers: {
           ...corsHeaders,
