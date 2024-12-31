@@ -26,10 +26,13 @@ interface LocationContentProps {
 }
 
 export const LocationContent = ({ city, state, content }: LocationContentProps) => {
+  // Clean the HTML content by removing any HTML comments
+  const cleanContent = content.main.replace(/<!--[\s\S]*?-->/g, '');
+
   return (
     <div className="space-y-12">
       {/* Main Content */}
-      <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content.main }} />
+      <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: cleanContent }} />
       
       {/* Services Section */}
       <section>
