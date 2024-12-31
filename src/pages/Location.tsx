@@ -84,23 +84,30 @@ const Location = () => {
               body: { city, state }
             });
 
-          if (functionError || !generatedData) {
+          if (functionError) {
             console.error('Error generating content:', functionError);
             throw new Error('Failed to generate content');
           }
 
-          // The Edge Function now handles saving to the database
+          if (!generatedData) {
+            throw new Error('No content was generated');
+          }
+
           // Fetch the newly created location data
           const { data: newLocation, error: fetchError } = await supabase
             .from("locations")
             .select("*")
             .eq("state", state)
             .eq("city", city)
-            .single();
+            .maybeSingle();
 
           if (fetchError) {
             console.error("Error fetching new location:", fetchError);
             throw new Error("Failed to retrieve location data");
+          }
+
+          if (!newLocation) {
+            throw new Error("Location data not found after generation");
           }
 
           console.log("Location data retrieved successfully:", newLocation);
