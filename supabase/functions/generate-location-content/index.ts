@@ -32,7 +32,7 @@ serve(async (req) => {
         "X-Title": "CTRL Tech Location Content Generator",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -40,7 +40,13 @@ serve(async (req) => {
           },
           {
             role: "user",
-            content: `Create content for our ${city}, ${state} location page. Include sections about our local IT services, AI automation solutions, and why businesses should choose us. Focus on local business challenges and how we solve them.`
+            content: `Create detailed content sections for our ${city}, ${state} location page including:
+            1. A local introduction about the business environment
+            2. Services offered with internal links
+            3. Local business challenges
+            4. Why choose us section
+            5. Generic testimonials (2-3)
+            Focus on local business challenges and how we solve them.`
           }
         ]
       })
@@ -63,22 +69,22 @@ serve(async (req) => {
         content: {
           main: generatedContent,
           services: [
-            "IT Support",
-            "Cybersecurity",
-            "Cloud Solutions",
-            "AI Automation",
-            "Network Management"
+            { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
+            { name: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
+            { name: "IT Support", slug: "it-support", description: "24/7 technical support and maintenance" },
+            { name: "AI Automation", slug: "ai-automation", description: "Streamline operations with AI" },
+            { name: "Network Management", slug: "network-management", description: "Optimize your network infrastructure" }
           ],
           industries: [
-            "Healthcare",
-            "Manufacturing",
-            "Professional Services",
-            "Retail",
-            "Financial Services"
+            { name: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
+            { name: "Manufacturing", slug: "manufacturing", description: "Smart manufacturing solutions" },
+            { name: "Finance", slug: "finance", description: "Secure financial technology" },
+            { name: "Retail", slug: "retail", description: "Modern retail IT solutions" },
+            { name: "Legal", slug: "legal", description: "Legal tech solutions" }
           ]
         },
         meta_title: `${COMPANY_NAME} IT Services & AI Automation in ${city}, ${state}`,
-        meta_description: `Discover ${COMPANY_NAME}'s professional IT services and AI automation solutions in ${city}, ${state}. Local expertise, 24/7 support, and innovative technology solutions for your business.`
+        meta_description: `Enhance your ${city} business operations with ${COMPANY_NAME}'s IT services and AI automation solutions. Expert local support, 24/7 service, and innovative technology solutions.`
       })
       .select()
       .single();

@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ContactSection } from "@/components/ContactSection";
 import { LocationLinks } from "@/components/LocationLinks";
+import { LocationContent } from "@/components/location/LocationContent";
 import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
@@ -173,9 +174,11 @@ const Location = () => {
           <h1 className="text-4xl font-bold mb-8">
             IT Services in {city}, {state}
           </h1>
-          <div className="prose max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: locationData.content }} />
-          </div>
+          <LocationContent 
+            city={city}
+            state={state}
+            content={JSON.parse(locationData.content)}
+          />
         </div>
         <ContactSection />
         <LocationLinks />
