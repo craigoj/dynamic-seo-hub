@@ -1,6 +1,6 @@
-import { ServiceFeatures } from "./ServiceFeatures";
-import { ServiceBenefits } from "./ServiceBenefits";
-import { ServiceFAQs } from "./ServiceFAQs";
+import { ServiceFeatures } from "./service/ServiceFeatures";
+import { ServiceBenefits } from "./service/ServiceBenefits";
+import { ServiceFAQs } from "./service/ServiceFAQs";
 import { motion } from "framer-motion";
 import { Shield, Building2, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
