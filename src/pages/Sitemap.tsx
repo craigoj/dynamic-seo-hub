@@ -22,6 +22,28 @@ const coreServices = [
   { slug: "managed-services", name: "Managed Services" },
 ];
 
+// Define all possible locations
+const allLocations = [
+  // Virginia locations
+  { city: "Richmond", state: "Virginia" },
+  { city: "Virginia Beach", state: "Virginia" },
+  { city: "Norfolk", state: "Virginia" },
+  { city: "Chesapeake", state: "Virginia" },
+  { city: "Arlington", state: "Virginia" },
+  { city: "Alexandria", state: "Virginia" },
+  { city: "Roanoke", state: "Virginia" },
+  { city: "Lynchburg", state: "Virginia" },
+  // Ohio locations
+  { city: "Columbus", state: "Ohio" },
+  { city: "Cleveland", state: "Ohio" },
+  { city: "Cincinnati", state: "Ohio" },
+  { city: "Toledo", state: "Ohio" },
+  { city: "Akron", state: "Ohio" },
+  { city: "Dayton", state: "Ohio" },
+  { city: "Parma", state: "Ohio" },
+  { city: "Canton", state: "Ohio" },
+];
+
 const Sitemap = () => {
   const [data, setData] = useState<SitemapData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,14 +56,9 @@ const Sitemap = () => {
           .from("industries")
           .select("slug, name");
 
-        // Fetch locations
-        const { data: locations } = await supabase
-          .from("locations")
-          .select("city, state");
-
         setData({
           industries: industries || [],
-          locations: locations || [],
+          locations: allLocations,
           services: coreServices.map(service => service.slug),
         });
       } catch (error) {
@@ -133,7 +150,14 @@ const Sitemap = () => {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {data?.locations.map((location) => (
                 <div key={`${location.state}-${location.city}`} className="space-y-2">
-                  <h3 className="font-medium text-gray-700">{location.city}, {location.state}</h3>
+                  <h3 className="font-medium text-gray-700">
+                    <Link 
+                      to={`/locations/${location.state.toLowerCase()}/${location.city.toLowerCase()}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {location.city}, {location.state}
+                    </Link>
+                  </h3>
                   <ul className="space-y-1 pl-4">
                     {coreServices.map((service) => (
                       <li key={`${location.city}-${service.slug}`}>
