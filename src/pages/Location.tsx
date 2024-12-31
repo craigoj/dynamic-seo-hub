@@ -173,6 +173,29 @@ const Location = () => {
     );
   }
 
+  // Parse the content string if it's stored as a string
+  let parsedContent;
+  try {
+    parsedContent = typeof locationData.content === 'string' 
+      ? JSON.parse(locationData.content)
+      : locationData.content;
+  } catch (err) {
+    // If parsing fails, wrap the content in a structure expected by LocationContent
+    parsedContent = {
+      main: locationData.content,
+      services: [
+        { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
+        { name: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
+        { name: "IT Support", slug: "it-support", description: "24/7 technical support and maintenance" }
+      ],
+      industries: [
+        { name: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
+        { name: "Manufacturing", slug: "manufacturing", description: "Smart manufacturing solutions" },
+        { name: "Finance", slug: "finance", description: "Secure financial technology" }
+      ]
+    };
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -184,7 +207,7 @@ const Location = () => {
           <LocationContent 
             city={city}
             state={state}
-            content={JSON.parse(locationData.content)}
+            content={parsedContent}
           />
         </div>
         <ContactSection />
