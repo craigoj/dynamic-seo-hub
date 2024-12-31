@@ -8,19 +8,29 @@ const COMPANY_NAME = "CTRL Tech";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { city, state } = await req.json();
 
     if (!city || !state) {
-      throw new Error("City and state are required");
+      return new Response(
+        JSON.stringify({ error: "City and state are required" }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
+
+    console.log(`Generating content for ${city}, ${state}`);
 
     // Generate content using OpenRouter API
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -52,6 +62,11 @@ serve(async (req) => {
       })
     });
 
+    if (!response.ok) {
+      console.error('OpenRouter API error:', await response.text());
+      throw new Error('Failed to generate content from OpenRouter API');
+    }
+
     const aiResponse = await response.json();
     const generatedContent = aiResponse.choices[0].message.content;
 
@@ -60,19 +75,20 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    console.log(`Checking existing content for ${city}, ${state}`);
+
     // First check if content exists for this city/state
-    const { data: existingContent } = await supabase
-      .from("city_content")
+    const { data: existingLocation } = await supabase
+      .from("locations")
       .select("id")
       .eq("city", city)
       .eq("state", state)
-      .single();
+      .maybeSingle();
 
-    let result;
     const contentData = {
       city,
       state,
-      content: {
+      content: JSON.stringify({
         main: generatedContent,
         services: [
           { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
@@ -88,28 +104,27 @@ serve(async (req) => {
           { name: "Retail", slug: "retail", description: "Modern retail IT solutions" },
           { name: "Legal", slug: "legal", description: "Legal tech solutions" }
         ]
-      },
+      }),
       meta_title: `${COMPANY_NAME} IT Services & AI Automation in ${city}, ${state}`,
       meta_description: `Enhance your ${city} business operations with ${COMPANY_NAME}'s IT services and AI automation solutions. Expert local support, 24/7 service, and innovative technology solutions.`
     };
 
-    if (existingContent) {
-      // Update existing content
+    let result;
+    if (existingLocation) {
       console.log(`Updating existing content for ${city}, ${state}`);
       const { data, error } = await supabase
-        .from("city_content")
+        .from("locations")
         .update(contentData)
-        .eq("id", existingContent.id)
+        .eq("id", existingLocation.id)
         .select()
         .single();
 
       if (error) throw error;
       result = data;
     } else {
-      // Insert new content
       console.log(`Creating new content for ${city}, ${state}`);
       const { data, error } = await supabase
-        .from("city_content")
+        .from("locations")
         .insert(contentData)
         .select()
         .single();
@@ -120,12 +135,9 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(result),
-      {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-        status: 200,
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 
       }
     );
 
@@ -133,12 +145,9 @@ serve(async (req) => {
     console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-        status: 400,
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500
       }
     );
   }
