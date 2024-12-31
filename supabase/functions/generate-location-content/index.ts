@@ -1,8 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { corsHeaders } from "../_shared/cors.ts";
 
+const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 const COMPANY_NAME = "CTRL Tech";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -16,44 +22,63 @@ serve(async (req) => {
       throw new Error("City and state are required");
     }
 
-    // Create content for the location
-    const content = `
-      <div class="prose max-w-none">
-        <h2>Professional IT Services in ${city}, ${state}</h2>
-        <p>${COMPANY_NAME} provides comprehensive IT solutions and services to businesses in ${city}, ${state}. Our team of experienced professionals delivers reliable technology support, cybersecurity solutions, and strategic IT consulting to help your business thrive.</p>
-        
-        <h3>Local IT Support in ${city}</h3>
-        <p>As your trusted technology partner in ${city}, ${COMPANY_NAME} offers:</p>
-        <ul>
-          <li>24/7 IT Support and Help Desk Services</li>
-          <li>Network Security and Monitoring</li>
-          <li>Cloud Solutions and Migration Services</li>
-          <li>Data Backup and Recovery</li>
-          <li>IT Infrastructure Management</li>
-        </ul>
-        
-        <h3>Why Choose ${COMPANY_NAME} in ${city}, ${state}?</h3>
-        <p>Our local presence in ${city} allows us to provide rapid response times and personalized service to meet your specific business needs. We understand the unique challenges faced by businesses in ${state} and offer tailored solutions to help you succeed.</p>
-      </div>
-    `;
+    // Generate content using OpenRouter API
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://ctrl.tech",
+        "X-Title": "CTRL Tech Location Content Generator",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional content writer for ${COMPANY_NAME}, an IT services and AI automation company. Create engaging, SEO-optimized content for our location pages.`
+          },
+          {
+            role: "user",
+            content: `Create content for our ${city}, ${state} location page. Include sections about our local IT services, AI automation solutions, and why businesses should choose us. Focus on local business challenges and how we solve them.`
+          }
+        ]
+      })
+    });
 
-    const metaTitle = `${COMPANY_NAME} IT Services in ${city}, ${state} | Professional Technology Solutions`;
-    const metaDescription = `${COMPANY_NAME} provides professional IT services, support, and solutions in ${city}, ${state}. Contact us for reliable technology support and strategic IT consulting.`;
+    const aiResponse = await response.json();
+    const generatedContent = aiResponse.choices[0].message.content;
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Insert the location data
+    // Store the generated content
     const { data, error } = await supabase
-      .from("locations")
-      .insert({
+      .from("city_content")
+      .upsert({
         city,
         state,
-        content,
-        meta_title: metaTitle,
-        meta_description: metaDescription,
+        content: {
+          main: generatedContent,
+          services: [
+            "IT Support",
+            "Cybersecurity",
+            "Cloud Solutions",
+            "AI Automation",
+            "Network Management"
+          ],
+          industries: [
+            "Healthcare",
+            "Manufacturing",
+            "Professional Services",
+            "Retail",
+            "Financial Services"
+          ]
+        },
+        meta_title: `${COMPANY_NAME} IT Services & AI Automation in ${city}, ${state}`,
+        meta_description: `Discover ${COMPANY_NAME}'s professional IT services and AI automation solutions in ${city}, ${state}. Local expertise, 24/7 support, and innovative technology solutions for your business.`
       })
       .select()
       .single();

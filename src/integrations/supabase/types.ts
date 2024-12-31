@@ -27,6 +27,39 @@ export type Database = {
         }
         Relationships: []
       }
+      city_content: {
+        Row: {
+          city: string
+          content: Json
+          created_at: string
+          id: string
+          meta_description: string
+          meta_title: string
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          city: string
+          content: Json
+          created_at?: string
+          id?: string
+          meta_description: string
+          meta_title: string
+          state: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          content?: Json
+          created_at?: string
+          id?: string
+          meta_description?: string
+          meta_title?: string
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       industries: {
         Row: {
           created_at: string
