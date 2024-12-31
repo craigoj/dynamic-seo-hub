@@ -9,42 +9,57 @@ export const generateSEOContent = ({ service, city, industry, state }: ContentPa
   const locationText = city ? ` in ${city}, ${state}` : '';
   const industryText = industry ? ` for ${industry}` : '';
   
-  const metaTitle = `${service} Services${industryText}${locationText} | CTRL Tech`;
-  const metaDescription = `Discover how CTRL Tech's ${service} services help${industryText ? ` ${industry}` : ' businesses'}${locationText} streamline operations, boost productivity, and secure their business. Learn more today!`;
+  const metaTitle = `${service} Services${industryText}${locationText} | Expert IT Solutions`;
+  const metaDescription = `Transform your business with professional ${service} services${locationText}. Tailored solutions${industryText}, 24/7 support, and proven expertise. Get your free consultation today!`;
   
   const content = `
     <div class="prose max-w-none">
-      <h2>Expert ${service} Solutions${industryText}${locationText}</h2>
-      <p>${city ? `${city}'s` : 'Local'} businesses deserve tools as innovative as their ambitions. CTRL Tech empowers organizations with ${service} services and AI automation, helping them secure data, optimize workflows, and provide exceptional experiences.</p>
+      <h2 class="text-3xl font-bold mb-6">Professional ${service} Solutions${industryText}${locationText}</h2>
+      <p class="text-lg mb-8">${city ? `${city}'s` : 'Local'} businesses deserve reliable and efficient IT solutions. Our ${service} services combine cutting-edge technology with expert support to help you achieve your business goals.</p>
       
-      <h2>Common Challenges We Solve</h2>
-      <ul>
-        <li>Managing sensitive data while ensuring compliance</li>
-        <li>Time lost on manual and repetitive tasks</li>
-        <li>Difficulty scaling operations without increasing costs</li>
+      <h2 class="text-2xl font-bold mb-4">Why Choose Our ${service} Services${locationText}?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold mb-3">Expert Support</h3>
+          <p>24/7 technical assistance from certified professionals${city ? ` in ${city}` : ''}</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold mb-3">Custom Solutions</h3>
+          <p>Tailored ${service.toLowerCase()} strategies for your specific needs</p>
+        </div>
+      </div>
+      
+      <h2 class="text-2xl font-bold mb-4">Our Comprehensive Approach</h2>
+      <ul class="space-y-4 mb-8">
+        <li class="flex items-start gap-3">
+          <span class="text-blue-600">✓</span>
+          <span>Proactive monitoring and maintenance</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-blue-600">✓</span>
+          <span>Regular security updates and patches</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="text-blue-600">✓</span>
+          <span>Performance optimization</span>
+        </li>
       </ul>
       
-      <h2>Our ${service} Solutions</h2>
-      <p>CTRL Tech helps businesses${locationText} tackle these challenges with tailored solutions, including advanced cybersecurity, automated workflows, and scalable systems.</p>
-      
-      <h2>Benefits of Our Services</h2>
-      <ul>
-        <li>Strengthen security and compliance</li>
-        <li>Save time with automation</li>
-        <li>Scale operations efficiently</li>
-        <li>Enhance team productivity</li>
-        <li>Reduce operational costs</li>
-      </ul>
-      
-      <h2>Why Choose CTRL Tech${locationText}</h2>
-      <ul>
-        <li>Deep understanding of ${industry || 'business'} challenges</li>
-        <li>${city ? `Local support and expertise in the ${city} market` : 'Nationwide support and expertise'}</li>
-        <li>Proven success in helping small businesses thrive with AI solutions</li>
-      </ul>
-      
-      <h2>Get Started Today</h2>
-      <p>Ready to transform your business${locationText}? Contact CTRL Tech today for a free consultation and see how we can help you grow.</p>
+      <h2 class="text-2xl font-bold mb-4">Industries We Serve${locationText}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="p-4 border rounded-lg">
+          <h3 class="font-semibold mb-2">Healthcare</h3>
+          <p class="text-sm">HIPAA-compliant solutions</p>
+        </div>
+        <div class="p-4 border rounded-lg">
+          <h3 class="font-semibold mb-2">Finance</h3>
+          <p class="text-sm">Secure banking solutions</p>
+        </div>
+        <div class="p-4 border rounded-lg">
+          <h3 class="font-semibold mb-2">Manufacturing</h3>
+          <p class="text-sm">Streamlined operations</p>
+        </div>
+      </div>
     </div>
   `;
 
@@ -53,31 +68,31 @@ export const generateSEOContent = ({ service, city, industry, state }: ContentPa
     metaTitle,
     metaDescription,
     features: [
-      "24/7 Monitoring and Support",
-      "Proactive Maintenance",
-      "Security and Compliance",
-      "AI-Powered Automation",
-      "Cloud Solutions"
+      "24/7 Expert Support",
+      "Proactive Monitoring",
+      "Security Management",
+      "Performance Optimization",
+      "Regular Maintenance"
     ],
     benefits: [
-      "Enhanced Security and Compliance",
-      "Improved Efficiency",
-      "Reduced Operational Costs",
-      "Increased Productivity",
-      "Better Customer Experience"
+      "Improved System Reliability",
+      "Enhanced Security",
+      "Reduced Downtime",
+      "Cost Efficiency",
+      "Scalable Solutions"
     ],
     faqs: [
       {
-        question: `What ${service} services does CTRL Tech offer${locationText}?`,
-        answer: `We offer comprehensive ${service} solutions including 24/7 monitoring, proactive maintenance, security, and AI automation${city ? ` to businesses in ${city}` : ''}.`
+        question: `What makes your ${service} services${locationText} unique?`,
+        answer: `We combine industry expertise with local support${city ? ` in ${city}` : ''} to deliver personalized ${service.toLowerCase()} solutions that meet your specific needs. Our 24/7 support and proactive approach ensure your systems run smoothly.`
       },
       {
         question: "How quickly can you respond to issues?",
-        answer: `We provide 24/7 support with rapid response times${city ? ` in ${city}` : ''}, typically addressing critical issues within 1 hour or less.`
+        answer: `We provide rapid response times${city ? ` in ${city}` : ''}, typically addressing critical issues within 1 hour. Our local team ensures quick on-site support when needed.`
       },
       {
         question: "Do you offer customized solutions?",
-        answer: `Yes, we tailor our ${service} services to meet your specific business needs and requirements${city ? ` in ${city}` : ''}.`
+        answer: `Yes, we tailor our ${service.toLowerCase()} services to your business requirements${city ? ` in ${city}` : ''}, ensuring you get exactly what you need to succeed.`
       }
     ]
   };
