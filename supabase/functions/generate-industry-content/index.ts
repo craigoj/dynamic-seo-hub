@@ -17,7 +17,6 @@ serve(async (req) => {
     const { industry } = await req.json()
     console.log('Generating content for industry:', industry)
 
-    // Convert industry slug to the format used in industryData
     const normalizedSlug = industry.toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/^manufacturing$/, 'manufacturing-and-logistics')
@@ -33,9 +32,9 @@ serve(async (req) => {
     
     console.log('Normalized slug:', normalizedSlug)
 
-    // Create default industry data if not found
-    const defaultIndustryData = {
+    const industryInfo = industryData[normalizedSlug] || {
       name: normalizedSlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+      description: `Expert IT services and AI automation solutions for ${normalizedSlug.replace(/-/g, ' ')} businesses.`,
       painPoints: [
         "Legacy System Integration",
         "Data Security and Compliance",
@@ -59,34 +58,33 @@ serve(async (req) => {
       ]
     }
 
-    const industryInfo = industryData[normalizedSlug] || defaultIndustryData
-    const { content, metaTitle, metaDescription } = generateContent(industry, industryInfo)
+    const metaTitle = `${industryInfo.name} IT Services & AI Solutions - CTRL Tech`
+    const metaDescription = `Transform your ${industryInfo.name.toLowerCase()} business with CTRL Tech's tailored IT services and AI automation solutions. Expert support for security, efficiency, and growth.`
+
+    const content = {
+      introduction: `At CTRL Tech, we specialize in delivering innovative IT services and AI automation solutions tailored to the unique needs of ${industryInfo.name} businesses. Our comprehensive approach combines industry expertise with cutting-edge technology to help you overcome challenges and thrive in today's competitive landscape.`,
+      painPoints: industryInfo.painPoints,
+      solutions: industryInfo.solutions,
+      benefits: industryInfo.benefits,
+      whyChooseUs: `With years of experience serving ${industryInfo.name} businesses, CTRL Tech combines cutting-edge technology with deep industry understanding. Our personalized approach ensures you receive the best solutions to drive efficiency, security, and growth.`,
+      cta: `Ready to transform your ${industryInfo.name} business with tailored IT and AI solutions? Contact CTRL Tech today to learn how we can help you thrive.`
+    }
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Delete existing content first to clear the cache
-    await supabase
-      .from('industries')
-      .delete()
-      .eq('slug', normalizedSlug)
-
     // Store the generated content
     const { data, error } = await supabase
       .from('industries')
-      .insert({
+      .upsert({
         name: industryInfo.name,
         slug: normalizedSlug,
-        description: `Expert IT services and AI automation solutions for ${industryInfo.name.toLowerCase()} businesses.`,
+        description: industryInfo.description,
         meta_title: metaTitle,
         meta_description: metaDescription,
-        content: JSON.stringify({
-          painPoints: industryInfo.painPoints,
-          solutions: industryInfo.solutions,
-          benefits: industryInfo.benefits
-        }),
+        content: JSON.stringify(content),
         schema_markup: {
           "@context": "https://schema.org",
           "@type": "Service",

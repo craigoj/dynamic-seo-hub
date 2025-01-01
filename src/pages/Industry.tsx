@@ -13,13 +13,14 @@ import { IndustrySolutions } from "@/components/industry/IndustrySolutions";
 import { IndustryBenefits } from "@/components/industry/IndustryBenefits";
 import { IndustryCTA } from "@/components/industry/IndustryCTA";
 import { ServiceGrid } from "@/components/ServiceGrid";
+import { motion } from "framer-motion";
 
 interface Industry {
   name: string;
   description: string;
   meta_title: string;
   meta_description: string;
-  content?: string | null;
+  content: string;
   schema_markup: any;
 }
 
@@ -35,7 +36,6 @@ const Industry = () => {
         setLoading(true);
         console.log('Fetching industry with slug:', industry);
         
-        // Map the URL slug to the full industry slug if needed
         const fullSlug = industry?.toLowerCase()
           .replace(/\s+/g, '-')
           .replace(/^manufacturing$/, 'manufacturing-and-logistics')
@@ -61,7 +61,6 @@ const Industry = () => {
 
         if (!existingData) {
           console.log('No existing content found, generating new content...');
-          // Generate new content if none exists
           const { data: generatedData, error: generateError } = await supabase.functions.invoke(
             'generate-industry-content',
             {
@@ -78,7 +77,6 @@ const Industry = () => {
           setIndustryData(existingData);
         }
 
-        // Update meta tags and schema
         if (existingData || industryData) {
           const content = existingData || industryData;
           document.title = content.meta_title;
@@ -150,17 +148,21 @@ const Industry = () => {
     );
   }
 
-  // Parse the content if it's a string
   const parsedContent = industryData.content ? JSON.parse(industryData.content) : null;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
-        <div className="container mx-auto px-4 py-8">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="container mx-auto px-4 py-8 md:py-12"
+        >
           <IndustryHeader 
             name={industryData.name} 
-            description={industryData.description} 
+            description={parsedContent?.introduction || industryData.description}
           />
           
           {parsedContent && (
@@ -179,8 +181,9 @@ const Industry = () => {
             <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
             <ServiceGrid industry={industry} />
           </section>
-        </div>
+        </motion.div>
         <LocationLinks />
+        <ContactSection />
       </main>
       <Footer />
     </div>
