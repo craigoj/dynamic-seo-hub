@@ -20,7 +20,6 @@ serve(async (req) => {
     // Convert industry slug to the format used in industryData
     const normalizedSlug = industry.toLowerCase()
       .replace(/\s+/g, '-')
-      // Handle special cases
       .replace(/^manufacturing$/, 'manufacturing-and-logistics')
       .replace(/^retail$/, 'retail-and-ecommerce')
       .replace(/^healthcare$/, 'healthcare-and-wellness')
@@ -30,16 +29,37 @@ serve(async (req) => {
       .replace(/^hospitality$/, 'hospitality-and-travel')
       .replace(/^local-government$/, 'local-governments')
       .replace(/^legal$/, 'professional-services')
+      .replace(/^finance$/, 'finance-and-banking')
     
     console.log('Normalized slug:', normalizedSlug)
-    console.log('Available industries:', Object.keys(industryData))
-    
-    if (!industry || !industryData[normalizedSlug]) {
-      console.error('Invalid industry specified:', industry, 'Normalized slug:', normalizedSlug)
-      throw new Error('Invalid industry specified')
+
+    // Create default industry data if not found
+    const defaultIndustryData = {
+      name: normalizedSlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+      painPoints: [
+        "Legacy System Integration",
+        "Data Security and Compliance",
+        "Digital Transformation",
+        "Operational Efficiency",
+        "Customer Experience Enhancement"
+      ],
+      solutions: [
+        "Custom IT Infrastructure",
+        "AI-Powered Automation",
+        "Cloud Migration Services",
+        "Cybersecurity Solutions",
+        "Digital Process Optimization"
+      ],
+      benefits: [
+        "Increased Operational Efficiency",
+        "Enhanced Security Posture",
+        "Improved Customer Satisfaction",
+        "Cost Optimization",
+        "Competitive Advantage"
+      ]
     }
 
-    const industryInfo = industryData[normalizedSlug]
+    const industryInfo = industryData[normalizedSlug] || defaultIndustryData
     const { content, metaTitle, metaDescription } = generateContent(industry, industryInfo)
 
     // Create Supabase client
@@ -74,8 +94,12 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Error storing content:', error)
+      throw error
+    }
 
+    console.log('Successfully generated and stored content for:', normalizedSlug)
     return new Response(
       JSON.stringify(data),
       {

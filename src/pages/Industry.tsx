@@ -28,7 +28,8 @@ const industrySlugMap: Record<string, string> = {
   'manufacturing': 'manufacturing-and-logistics',
   'local-government': 'local-governments',
   'legal': 'professional-services',
-  'professional-services': 'professional-services'
+  'professional-services': 'professional-services',
+  'finance': 'finance-and-banking'
 };
 
 const Industry = () => {
@@ -56,6 +57,7 @@ const Industry = () => {
         if (fetchError) throw fetchError;
 
         if (!existingData) {
+          console.log('No existing content found, generating new content...');
           // Generate new content if none exists
           const { data: generatedData, error: generateError } = await supabase.functions.invoke(
             'generate-industry-content',
@@ -65,8 +67,11 @@ const Industry = () => {
           );
 
           if (generateError) throw generateError;
+          
+          console.log('Content generated successfully:', generatedData);
           setIndustry(generatedData);
         } else {
+          console.log('Found existing content:', existingData);
           const industryData: Industry = {
             name: existingData.name,
             description: existingData.description,
