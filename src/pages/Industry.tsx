@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { LeadForm } from "@/components/LeadForm";
-import { LocationLinks } from "@/components/LocationLinks";
-import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ContactSection } from "@/components/ContactSection";
+import { LocationLinks } from "@/components/LocationLinks";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IndustryHeader } from "@/components/industry/IndustryHeader";
@@ -12,6 +12,7 @@ import { IndustryPainPoints } from "@/components/industry/IndustryPainPoints";
 import { IndustrySolutions } from "@/components/industry/IndustrySolutions";
 import { IndustryBenefits } from "@/components/industry/IndustryBenefits";
 import { IndustryCTA } from "@/components/industry/IndustryCTA";
+import { ServiceGrid } from "@/components/ServiceGrid";
 
 interface Industry {
   name: string;
@@ -22,24 +23,9 @@ interface Industry {
   schema_markup: any;
 }
 
-// Map short URLs to full industry slugs
-const industrySlugMap: Record<string, string> = {
-  'retail': 'retail-and-ecommerce',
-  'healthcare': 'healthcare-and-wellness',
-  'trades': 'trades-and-home-services',
-  'technology': 'technology-and-startups',
-  'education': 'education-and-non-profits',
-  'hospitality': 'hospitality-and-travel',
-  'manufacturing': 'manufacturing-and-logistics',
-  'local-government': 'local-governments',
-  'legal': 'professional-services',
-  'professional-services': 'professional-services',
-  'finance': 'finance-and-banking'
-};
-
 const Industry = () => {
-  const { slug } = useParams();
-  const [industry, setIndustry] = useState<Industry | null>(null);
+  const { industry } = useParams();
+  const [industryData, setIndustryData] = useState<Industry | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -47,12 +33,24 @@ const Industry = () => {
     const fetchIndustry = async () => {
       try {
         setLoading(true);
+        console.log('Fetching industry with slug:', industry);
         
         // Map the URL slug to the full industry slug if needed
-        const fullSlug = industrySlugMap[slug as string] || slug;
-        console.log('Fetching industry with slug:', fullSlug);
+        const fullSlug = industry?.toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/^manufacturing$/, 'manufacturing-and-logistics')
+          .replace(/^retail$/, 'retail-and-ecommerce')
+          .replace(/^healthcare$/, 'healthcare-and-wellness')
+          .replace(/^trades$/, 'trades-and-home-services')
+          .replace(/^technology$/, 'technology-and-startups')
+          .replace(/^education$/, 'education-and-non-profits')
+          .replace(/^hospitality$/, 'hospitality-and-travel')
+          .replace(/^local-government$/, 'local-governments')
+          .replace(/^legal$/, 'professional-services')
+          .replace(/^finance$/, 'finance-and-banking');
         
-        // First try to fetch existing content
+        console.log('Normalized slug:', fullSlug);
+
         const { data: existingData, error: fetchError } = await supabase
           .from("industries")
           .select("*")
@@ -74,23 +72,15 @@ const Industry = () => {
           if (generateError) throw generateError;
           
           console.log('Content generated successfully:', generatedData);
-          setIndustry(generatedData);
+          setIndustryData(generatedData);
         } else {
           console.log('Found existing content:', existingData);
-          const industryData: Industry = {
-            name: existingData.name,
-            description: existingData.description,
-            meta_title: existingData.meta_title,
-            meta_description: existingData.meta_description,
-            content: existingData.content,
-            schema_markup: existingData.schema_markup
-          };
-          setIndustry(industryData);
+          setIndustryData(existingData);
         }
 
         // Update meta tags and schema
-        if (existingData || industry) {
-          const content = existingData || industry;
+        if (existingData || industryData) {
+          const content = existingData || industryData;
           document.title = content.meta_title;
           const metaDescription = document.querySelector('meta[name="description"]');
           if (metaDescription) {
@@ -120,10 +110,10 @@ const Industry = () => {
       }
     };
 
-    if (slug) {
+    if (industry) {
       fetchIndustry();
     }
-  }, [slug]);
+  }, [industry]);
 
   if (loading) {
     return (
@@ -145,7 +135,7 @@ const Industry = () => {
     );
   }
 
-  if (!industry) {
+  if (!industryData) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -161,7 +151,7 @@ const Industry = () => {
   }
 
   // Parse the content if it's a string
-  const parsedContent = industry.content ? JSON.parse(industry.content) : null;
+  const parsedContent = industryData.content ? JSON.parse(industryData.content) : null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -169,8 +159,8 @@ const Industry = () => {
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           <IndustryHeader 
-            name={industry.name} 
-            description={industry.description} 
+            name={industryData.name} 
+            description={industryData.description} 
           />
           
           {parsedContent && (
@@ -178,16 +168,16 @@ const Industry = () => {
               <IndustryPainPoints painPoints={parsedContent.painPoints} />
               <IndustrySolutions 
                 solutions={parsedContent.solutions} 
-                industryName={industry.name}
+                industryName={industryData.name}
               />
               <IndustryBenefits benefits={parsedContent.benefits} />
-              <IndustryCTA industryName={industry.name} />
+              <IndustryCTA industryName={industryData.name} />
             </>
           )}
           
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
-            <LeadForm />
+            <ServiceGrid industry={industry} />
           </section>
         </div>
         <LocationLinks />

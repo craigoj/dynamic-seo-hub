@@ -10,13 +10,13 @@ export const IndustriesSection = () => {
       icon: <Stethoscope className="h-8 w-8 text-blue-600" />,
       title: "Healthcare",
       description: "HIPAA-compliant IT solutions and AI automation for healthcare providers.",
-      slug: "healthcare"
+      slug: "healthcare-and-wellness"
     },
     {
       icon: <Factory className="h-8 w-8 text-blue-600" />,
       title: "Manufacturing",
       description: "Smart manufacturing solutions and industrial automation services.",
-      slug: "manufacturing"
+      slug: "manufacturing-and-logistics"
     },
     {
       icon: <Building2 className="h-8 w-8 text-blue-600" />,
@@ -28,13 +28,13 @@ export const IndustriesSection = () => {
       icon: <ShoppingBag className="h-8 w-8 text-blue-600" />,
       title: "Retail",
       description: "Digital transformation and POS solutions for retail businesses.",
-      slug: "retail"
+      slug: "retail-and-ecommerce"
     },
     {
       icon: <GraduationCap className="h-8 w-8 text-blue-600" />,
       title: "Education",
       description: "EdTech solutions and IT infrastructure for educational institutions.",
-      slug: "education"
+      slug: "education-and-non-profits"
     }
   ];
 
