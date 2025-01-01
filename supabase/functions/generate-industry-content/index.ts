@@ -67,16 +67,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
+    // Delete existing content first to clear the cache
+    await supabase
+      .from('industries')
+      .delete()
+      .eq('slug', normalizedSlug)
+
     // Store the generated content
     const { data, error } = await supabase
       .from('industries')
-      .upsert({
+      .insert({
         name: industryInfo.name,
         slug: normalizedSlug,
         description: `Expert IT services and AI automation solutions for ${industryInfo.name.toLowerCase()} businesses.`,
         meta_title: metaTitle,
         meta_description: metaDescription,
-        content: JSON.stringify(content),
+        content: JSON.stringify({
+          painPoints: industryInfo.painPoints,
+          solutions: industryInfo.solutions,
+          benefits: industryInfo.benefits
+        }),
         schema_markup: {
           "@context": "https://schema.org",
           "@type": "Service",
@@ -88,8 +98,6 @@ serve(async (req) => {
           "description": metaDescription,
           "serviceType": "IT Services and AI Automation"
         }
-      }, {
-        onConflict: 'slug'
       })
       .select()
       .single()

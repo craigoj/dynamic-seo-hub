@@ -7,6 +7,11 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IndustryHeader } from "@/components/industry/IndustryHeader";
+import { IndustryPainPoints } from "@/components/industry/IndustryPainPoints";
+import { IndustrySolutions } from "@/components/industry/IndustrySolutions";
+import { IndustryBenefits } from "@/components/industry/IndustryBenefits";
+import { IndustryCTA } from "@/components/industry/IndustryCTA";
 
 interface Industry {
   name: string;
@@ -155,15 +160,30 @@ const Industry = () => {
     );
   }
 
+  // Parse the content if it's a string
+  const parsedContent = industry.content ? JSON.parse(industry.content) : null;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          <div 
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: industry.content || '' }}
+          <IndustryHeader 
+            name={industry.name} 
+            description={industry.description} 
           />
+          
+          {parsedContent && (
+            <>
+              <IndustryPainPoints painPoints={parsedContent.painPoints} />
+              <IndustrySolutions 
+                solutions={parsedContent.solutions} 
+                industryName={industry.name}
+              />
+              <IndustryBenefits benefits={parsedContent.benefits} />
+              <IndustryCTA industryName={industry.name} />
+            </>
+          )}
           
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
