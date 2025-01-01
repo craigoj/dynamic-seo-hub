@@ -4,29 +4,30 @@ import { ServiceCard } from "./ServiceCard";
 interface ServiceGridProps {
   industry?: string;
   city?: string;
+  state?: string;
 }
 
-export const ServiceGrid: React.FC<ServiceGridProps> = ({ industry, city }) => {
+export const ServiceGrid: React.FC<ServiceGridProps> = ({ industry, city, state }) => {
   const services = [
     {
       title: "IT Support",
       description: "24/7 technical support and maintenance for your business",
-      href: `/services/it-support${city ? `/${state}/${city}` : ''}`
+      href: `/services/it-support${city && state ? `/${state}/${city}` : ''}`
     },
     {
       title: "Cloud Services",
       description: "Secure and scalable cloud solutions for modern businesses",
-      href: `/services/cloud-services${city ? `/${state}/${city}` : ''}`
+      href: `/services/cloud-services${city && state ? `/${state}/${city}` : ''}`
     },
     {
       title: "Cybersecurity",
       description: "Comprehensive security solutions to protect your data",
-      href: `/services/cybersecurity${city ? `/${state}/${city}` : ''}`
+      href: `/services/cybersecurity${city && state ? `/${state}/${city}` : ''}`
     },
     {
       title: "Network Solutions",
       description: "Reliable networking infrastructure for your organization",
-      href: `/services/network-solutions${city ? `/${state}/${city}` : ''}`
+      href: `/services/network-solutions${city && state ? `/${state}/${city}` : ''}`
     }
   ];
 
