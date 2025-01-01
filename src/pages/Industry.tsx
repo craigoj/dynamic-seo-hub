@@ -26,7 +26,9 @@ const industrySlugMap: Record<string, string> = {
   'education': 'education-and-non-profits',
   'hospitality': 'hospitality-and-travel',
   'manufacturing': 'manufacturing-and-logistics',
-  'local-government': 'local-governments'
+  'local-government': 'local-governments',
+  'legal': 'professional-services',
+  'professional-services': 'professional-services'
 };
 
 const Industry = () => {
