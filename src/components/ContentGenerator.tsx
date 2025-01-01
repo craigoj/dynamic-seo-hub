@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { Loader2 } from "lucide-react"
 
 interface ContentGeneratorProps {
   onGenerated?: (content: any) => void;
@@ -82,16 +83,35 @@ export const ContentGenerator = ({
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="min-h-[100px]"
+            disabled={isGenerating}
           />
         )}
         <div className="flex justify-end">
           <Button 
             onClick={handleGenerate}
             disabled={isGenerating}
+            className="min-w-[120px]"
           >
-            {isGenerating ? "Generating..." : "Generate"}
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              "Generate"
+            )}
           </Button>
         </div>
+        {isGenerating && type !== 'custom' && (
+          <div className="mt-4 p-4 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Generating {service} content{city ? ` for ${city}` : ''}{industry ? ` in ${industry}` : ''}...
+              </p>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
