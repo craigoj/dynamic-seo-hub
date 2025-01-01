@@ -163,13 +163,10 @@ const Industry = () => {
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           {content ? (
-            <>
-              <div dangerouslySetInnerHTML={{ __html: content.introduction }} />
-              <div dangerouslySetInnerHTML={{ __html: content.challenges }} />
-              <div dangerouslySetInnerHTML={{ __html: content.solutions }} />
-              <div dangerouslySetInnerHTML={{ __html: content.benefits }} />
-              <div dangerouslySetInnerHTML={{ __html: content.cta }} />
-            </>
+            <div 
+              className="prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           ) : (
             <div className="prose prose-lg max-w-none">
               <h1 className="text-4xl font-bold mb-6">{industry.name}</h1>
