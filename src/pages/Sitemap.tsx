@@ -26,6 +26,10 @@ const coreServices = [
   { name: "Cloud Solutions", slug: "cloud-solutions" },
   { name: "Network Services", slug: "network-services" },
   { name: "AI Automation", slug: "ai-automation" },
+  { name: "IT Infrastructure", slug: "it-infrastructure" },
+  { name: "Network Management", slug: "network-management" },
+  { name: "Backup & Recovery", slug: "backup-recovery" },
+  { name: "IT Consulting", slug: "it-consulting" },
 ];
 
 // Location data
@@ -87,6 +91,38 @@ const Sitemap = () => {
         <h1 className="text-3xl font-bold mb-8">Sitemap</h1>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Main Pages */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Main Pages</h2>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/" className="text-blue-600 hover:underline">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/ai-services" className="text-blue-600 hover:underline">
+                  AI Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="text-blue-600 hover:underline">
+                  All Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/industries" className="text-blue-600 hover:underline">
+                  All Industries
+                </Link>
+              </li>
+              <li>
+                <Link to="/locations" className="text-blue-600 hover:underline">
+                  All Locations
+                </Link>
+              </li>
+            </ul>
+          </section>
+
           {/* Main Services */}
           <section>
             <h2 className="text-xl font-semibold mb-4">Main Services</h2>
@@ -154,7 +190,7 @@ const Sitemap = () => {
 
           {/* Location-Based Services */}
           <section className="md:col-span-2 lg:col-span-3">
-            <h2 className="text-xl font-semibold mb-4">Location-Based Services</h2>
+            <h2 className="text-xl font-semibold mb-4">Location-Based Services & Industries</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allLocations.map((location) => (
                 <div key={`${location.state}-${location.city}`} className="space-y-2">
@@ -166,18 +202,38 @@ const Sitemap = () => {
                       {location.city}, {location.state}
                     </Link>
                   </h3>
-                  <ul className="space-y-1">
-                    {coreServices.map((service) => (
-                      <li key={`${location.city}-${service.slug}`}>
-                        <Link 
-                          to={`/services/${service.slug}/${location.state}/${location.city}`}
-                          className="text-blue-600 hover:underline text-sm"
-                        >
-                          {service.name} in {location.city}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Services</h4>
+                      <ul className="space-y-1">
+                        {coreServices.map((service) => (
+                          <li key={`${location.city}-${service.slug}`}>
+                            <Link 
+                              to={`/services/${service.slug}/${location.state}/${location.city}`}
+                              className="text-blue-600 hover:underline text-sm"
+                            >
+                              {service.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Industries</h4>
+                      <ul className="space-y-1">
+                        {data?.industries.map((industry) => (
+                          <li key={`${location.city}-${industry.slug}`}>
+                            <Link 
+                              to={`/industries/${industry.slug}/${location.state}/${location.city}`}
+                              className="text-blue-600 hover:underline text-sm"
+                            >
+                              {industry.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

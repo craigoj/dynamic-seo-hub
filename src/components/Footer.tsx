@@ -21,8 +21,7 @@ export const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-300">
-              <li>1-800-IT-SUPPORT</li>
-              <li>contact@company.com</li>
+              <li>info@ctrltechhq.com</li>
             </ul>
           </div>
           <div>
@@ -37,7 +36,7 @@ export const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-300">
-          <p>&copy; 2024 Your Company. All rights reserved.</p>
+          <p>&copy; 2024 CTRL Tech. All rights reserved.</p>
         </div>
       </div>
     </footer>
