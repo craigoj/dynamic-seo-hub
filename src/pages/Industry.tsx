@@ -155,24 +155,15 @@ const Industry = () => {
     );
   }
 
-  const content = industry.content ? JSON.parse(industry.content) : null;
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          {content ? (
-            <div 
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
-          ) : (
-            <div className="prose prose-lg max-w-none">
-              <h1 className="text-4xl font-bold mb-6">{industry.name}</h1>
-              <p className="text-xl mb-8">{industry.description}</p>
-            </div>
-          )}
+          <div 
+            className="prose prose-lg max-w-none"
+            dangerouslySetInnerHTML={{ __html: industry.content || '' }}
+          />
           
           <section className="my-12">
             <h2 className="text-3xl font-bold mb-6">Get Started Today</h2>
