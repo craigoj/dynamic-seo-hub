@@ -12,12 +12,12 @@ const services = [
 ];
 
 const industries = [
-  { title: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
+  { title: "Healthcare", slug: "healthcare-and-wellness", description: "HIPAA-compliant IT solutions" },
   { title: "Finance", slug: "finance", description: "Secure financial technology solutions" },
-  { title: "Manufacturing", slug: "manufacturing", description: "Modern manufacturing IT solutions" },
-  { title: "Retail", slug: "retail", description: "Technology for modern retail" },
-  { title: "Legal", slug: "legal", description: "Secure document management solutions" },
-  { title: "Education", slug: "education", description: "IT support for educational institutions" }
+  { title: "Manufacturing", slug: "manufacturing-and-logistics", description: "Modern manufacturing IT solutions" },
+  { title: "Retail", slug: "retail-and-ecommerce", description: "Technology for modern retail" },
+  { title: "Professional Services", slug: "professional-services", description: "Secure document management solutions" },
+  { title: "Education", slug: "education-and-non-profits", description: "IT support for educational institutions" }
 ];
 
 export const Header = () => {
