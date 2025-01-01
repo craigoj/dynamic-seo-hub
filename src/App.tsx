@@ -1,75 +1,40 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Index from "@/pages/Index";
-import Services from "@/pages/Services";
-import Service from "@/pages/Service";
-import Industries from "@/pages/Industries";
-import Industry from "@/pages/Industry";
-import Locations from "@/pages/Locations";
-import Location from "@/pages/Location";
-import StateLocation from "@/pages/StateLocation";
-import LocalService from "@/pages/LocalService";
-import AIServices from "@/pages/AIServices";
-import Admin from "@/pages/Admin";
-import AdminLogin from "@/pages/AdminLogin";
-import Sitemap from "@/pages/Sitemap";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Index />,
-  },
-  {
-    path: "/services",
-    element: <Services />,
-  },
-  {
-    path: "/services/:service",
-    element: <Service />,
-  },
-  {
-    path: "/services/:service/:state/:city",
-    element: <LocalService />,
-  },
-  {
-    path: "/industries",
-    element: <Industries />,
-  },
-  {
-    path: "/industries/:industry",
-    element: <Industry />,
-  },
-  {
-    path: "/locations",
-    element: <Locations />,
-  },
-  {
-    path: "/locations/:state",
-    element: <StateLocation />,
-  },
-  {
-    path: "/locations/:state/:city",
-    element: <Location />,
-  },
-  {
-    path: "/ai-services",
-    element: <AIServices />,
-  },
-  {
-    path: "/admin",
-    element: <Admin />,
-  },
-  {
-    path: "/admin/login",
-    element: <AdminLogin />,
-  },
-  {
-    path: "/sitemap",
-    element: <Sitemap />,
-  },
-]);
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import Service from "./pages/Service";
+import LocalService from "./pages/LocalService";
+import Industry from "./pages/Industry";
+import LocalIndustry from "./pages/LocalIndustry";
+import Location from "./pages/Location";
+import StateLocation from "./pages/StateLocation";
+import Services from "./pages/Services";
+import Industries from "./pages/Industries";
+import Locations from "./pages/Locations";
+import AIServices from "./pages/AIServices";
+import Sitemap from "./pages/Sitemap";
+import AdminLogin from "./pages/AdminLogin";
+import Admin from "./pages/Admin";
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/services/:service" element={<Service />} />
+        <Route path="/services/:service/:state/:city" element={<LocalService />} />
+        <Route path="/industries" element={<Industries />} />
+        <Route path="/industries/:industry" element={<Industry />} />
+        <Route path="/industries/:industry/:state/:city" element={<LocalIndustry />} />
+        <Route path="/locations" element={<Locations />} />
+        <Route path="/locations/:state" element={<StateLocation />} />
+        <Route path="/locations/:state/:city" element={<Location />} />
+        <Route path="/ai-services" element={<AIServices />} />
+        <Route path="/sitemap" element={<Sitemap />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
