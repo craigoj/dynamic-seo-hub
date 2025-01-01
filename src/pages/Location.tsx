@@ -6,6 +6,8 @@ import { Footer } from "@/components/Footer";
 import { ContactSection } from "@/components/ContactSection";
 import { LocationLinks } from "@/components/LocationLinks";
 import { LocationContent } from "@/components/location/LocationContent";
+import { LocationHeader } from "@/components/location/LocationHeader";
+import { LocationIndustries } from "@/components/location/LocationIndustries";
 import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
@@ -24,7 +26,6 @@ const Location = () => {
           throw new Error("State and city are required");
         }
 
-        // First try to get from database
         const { data: existingData, error: dbError } = await supabase
           .from("locations")
           .select("*")
@@ -78,7 +79,6 @@ const Location = () => {
         } else {
           console.log("No existing data found, generating content...");
           
-          // Generate content using Edge Function
           const { data: generatedData, error: functionError } = await supabase.functions
             .invoke('generate-location-content', {
               body: { city, state }
@@ -93,7 +93,6 @@ const Location = () => {
             throw new Error('No content was generated');
           }
 
-          // Fetch the newly created location data
           const { data: newLocation, error: fetchError } = await supabase
             .from("locations")
             .select("*")
@@ -173,25 +172,18 @@ const Location = () => {
     );
   }
 
-  // Parse the content string if it's stored as a string
   let parsedContent;
   try {
     parsedContent = typeof locationData.content === 'string' 
       ? JSON.parse(locationData.content)
       : locationData.content;
   } catch (err) {
-    // If parsing fails, wrap the content in a structure expected by LocationContent
     parsedContent = {
       main: locationData.content,
       services: [
         { name: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
         { name: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
         { name: "IT Support", slug: "it-support", description: "24/7 technical support and maintenance" }
-      ],
-      industries: [
-        { name: "Healthcare", slug: "healthcare", description: "HIPAA-compliant IT solutions" },
-        { name: "Manufacturing", slug: "manufacturing", description: "Smart manufacturing solutions" },
-        { name: "Finance", slug: "finance", description: "Secure financial technology" }
       ]
     };
   }
@@ -200,16 +192,13 @@ const Location = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
-        <div className="container mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold mb-8">
-            IT Services in {city}, {state}
-          </h1>
-          <LocationContent 
-            city={city}
-            state={state}
-            content={parsedContent}
-          />
-        </div>
+        <LocationHeader city={city!} state={state!} />
+        <LocationContent 
+          city={city!}
+          state={state!}
+          content={parsedContent}
+        />
+        <LocationIndustries city={city!} state={state!} />
         <ContactSection />
         <LocationLinks />
       </main>
