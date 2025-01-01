@@ -6,7 +6,6 @@ interface IndustryBenefitsProps {
 }
 
 export const IndustryBenefits = ({ benefits = [] }: IndustryBenefitsProps) => {
-  // Ensure benefits is an array and has items
   const benefitItems = Array.isArray(benefits) ? benefits : [];
 
   return (

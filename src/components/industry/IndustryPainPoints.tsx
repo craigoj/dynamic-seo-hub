@@ -6,7 +6,6 @@ interface IndustryPainPointsProps {
 }
 
 export const IndustryPainPoints = ({ painPoints = [] }: IndustryPainPointsProps) => {
-  // Ensure painPoints is an array and has items
   const painPointItems = Array.isArray(painPoints) ? painPoints : [];
 
   return (

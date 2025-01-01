@@ -7,7 +7,6 @@ interface IndustrySolutionsProps {
 }
 
 export const IndustrySolutions = ({ solutions = [], industryName }: IndustrySolutionsProps) => {
-  // Ensure solutions is an array and has items
   const solutionItems = Array.isArray(solutions) ? solutions : [];
 
   return (
