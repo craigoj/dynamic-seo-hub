@@ -32,8 +32,37 @@ export const LocationContent = ({ city, state, content }: LocationContentProps) 
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Clean the HTML content by removing any HTML comments
-  const cleanContent = content.main.replace(/<!--[\s\S]*?-->/g, '');
+  // Default services if none are provided
+  const defaultServices = [
+    { 
+      name: "Cybersecurity", 
+      slug: "cybersecurity", 
+      description: "Protect your business with enterprise-grade security solutions" 
+    },
+    { 
+      name: "Cloud Solutions", 
+      slug: "cloud-solutions", 
+      description: "Seamless cloud migration and management services" 
+    },
+    { 
+      name: "IT Support", 
+      slug: "it-support", 
+      description: "24/7 technical support and maintenance" 
+    }
+  ];
+
+  // Extract content from markdown code block if necessary
+  const processContent = (rawContent: string) => {
+    if (typeof rawContent === 'string' && rawContent.includes('```')) {
+      // Extract content between code blocks
+      const matches = rawContent.match(/```(?:html)?\n([\s\S]*?)\n```/);
+      return matches ? matches[1] : rawContent;
+    }
+    return rawContent;
+  };
+
+  const cleanContent = processContent(content.main);
+  const services = content.services || defaultServices;
 
   const handleServiceSelect = (service: Service) => {
     navigate(`/services/${service.slug}/${state}/${city}`);
@@ -51,7 +80,7 @@ export const LocationContent = ({ city, state, content }: LocationContentProps) 
           Services in {city}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {content.services.map((service) => (
+          {services.map((service) => (
             <Card 
               key={service.slug} 
               className="hover:shadow-lg transition-shadow cursor-pointer"
@@ -67,30 +96,6 @@ export const LocationContent = ({ city, state, content }: LocationContentProps) 
                 >
                   View Details
                 </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Industries Section */}
-      <section>
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Building2 className="h-6 w-6 text-blue-600" />
-          Industries We Serve in {city}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {content.industries.map((industry) => (
-            <Card key={industry.slug} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-2">{industry.name}</h3>
-                <p className="text-gray-600 mb-4">{industry.description}</p>
-                <Link 
-                  to={`/industries/${industry.slug}`} 
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Learn More →
-                </Link>
               </CardContent>
             </Card>
           ))}
