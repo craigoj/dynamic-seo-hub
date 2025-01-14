@@ -98,9 +98,38 @@ export const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link to="/#contact-form" className="flex items-center gap-2 px-4 py-2 text-sm font-medium">
-                  <Mail className="h-4 w-4" />
-                  Contact Us
+                <Link 
+                  to="/about"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  About
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link 
+                  to="/contact"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  Contact
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link 
+                  to="/sitemap"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  Sitemap
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link 
+                  to="/admin/login"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
+                >
+                  Admin Login
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
