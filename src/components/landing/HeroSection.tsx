@@ -15,7 +15,7 @@ export const HeroSection = () => {
             Automate Your Business, Simplify Your Life
           </h1>
           <p className="text-xl mb-8 text-blue-100">
-            Designed for businesses with 4-20 employees, CTRL Tech combines IT expertise with AI automation to eliminate inefficiencies and drive growth.
+            Empowering small businesses with 4-20 employees through seamless integration of IT expertise and AI automation. Transform your operations and accelerate business growth with our innovative solutions.
           </p>
           <ul className="space-y-3 mb-8 text-blue-100">
             <li className="flex items-start">
