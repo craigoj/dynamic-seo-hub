@@ -39,22 +39,18 @@ const SitemapXML = () => {
             });
         }
 
-        // Create a new document with XML content
-        const xmlDoc = new XMLSerializer().serializeToString(
-          new DOMParser().parseFromString(
-            '<?xml version="1.0" encoding="UTF-8"?>\n' +
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-            xmlContent +
-            '</urlset>',
-            'application/xml'
-          )
-        );
+        // Set the content type
+        const meta = document.createElement('meta');
+        meta.setAttribute('http-equiv', 'Content-Type');
+        meta.setAttribute('content', 'application/xml');
+        document.head.appendChild(meta);
 
-        // Replace the entire document content with the XML
-        document.documentElement.innerHTML = '';
-        const pre = document.createElement('pre');
-        pre.textContent = xmlDoc;
-        document.documentElement.appendChild(pre);
+        // Write the XML content directly
+        document.documentElement.innerHTML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${xmlContent}
+</urlset>`;
+
       } catch (error) {
         console.error('Error generating sitemap:', error);
       }
