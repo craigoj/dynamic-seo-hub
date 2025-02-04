@@ -14,11 +14,11 @@ const SitemapXML = () => {
           .single();
 
         if (cacheData) {
-          // Set XML content type
-          document.contentType = 'application/xml';
-          document.open('application/xml');
+          document.open('text/xml');
           document.write('<?xml version="1.0" encoding="UTF-8"?>\n');
+          document.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');
           document.write(cacheData.content);
+          document.write('</urlset>');
           document.close();
           return;
         }
@@ -43,11 +43,12 @@ const SitemapXML = () => {
             onConflict: 'url'
           });
 
-        // Set XML content type and write the sitemap
-        document.contentType = 'application/xml';
-        document.open('application/xml');
+        // Write the sitemap
+        document.open('text/xml');
         document.write('<?xml version="1.0" encoding="UTF-8"?>\n');
+        document.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n');
         document.write(sitemap);
+        document.write('</urlset>');
         document.close();
       } catch (error) {
         console.error('Error generating sitemap:', error);
@@ -61,7 +62,7 @@ const SitemapXML = () => {
   useEffect(() => {
     const meta = document.createElement('meta');
     meta.httpEquiv = 'Content-Type';
-    meta.content = 'application/xml; charset=utf-8';
+    meta.content = 'text/xml; charset=utf-8';
     document.head.appendChild(meta);
 
     return () => {
