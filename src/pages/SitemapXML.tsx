@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateSitemap } from "@/utils/generateSitemap";
 
@@ -14,7 +14,10 @@ const SitemapXML = () => {
           .single();
 
         if (cacheData) {
-          document.open();
+          // Set XML content type
+          document.contentType = 'application/xml';
+          document.open('application/xml');
+          document.write('<?xml version="1.0" encoding="UTF-8"?>\n');
           document.write(cacheData.content);
           document.close();
           return;
@@ -40,8 +43,10 @@ const SitemapXML = () => {
             onConflict: 'url'
           });
 
-        // Set the content type and write the XML
-        document.open();
+        // Set XML content type and write the sitemap
+        document.contentType = 'application/xml';
+        document.open('application/xml');
+        document.write('<?xml version="1.0" encoding="UTF-8"?>\n');
         document.write(sitemap);
         document.close();
       } catch (error) {
@@ -50,6 +55,18 @@ const SitemapXML = () => {
     };
 
     fetchAndGenerateSitemap();
+  }, []);
+
+  // Set content type in the head
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.httpEquiv = 'Content-Type';
+    meta.content = 'application/xml; charset=utf-8';
+    document.head.appendChild(meta);
+
+    return () => {
+      document.head.removeChild(meta);
+    };
   }, []);
 
   return null;
