@@ -11,6 +11,7 @@ import Industries from "./pages/Industries";
 import Locations from "./pages/Locations";
 import AIServices from "./pages/AIServices";
 import Sitemap from "./pages/Sitemap";
+import SitemapXML from "./pages/SitemapXML";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/locations/:state/:city" element={<Location />} />
         <Route path="/ai-services" element={<AIServices />} />
         <Route path="/sitemap" element={<Sitemap />} />
+        <Route path="/sitemap.xml" element={<SitemapXML />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
