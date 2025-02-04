@@ -1,75 +1,57 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { MainLinks } from "@/components/sitemap/MainLinks";
+import { ServiceLinks } from "@/components/sitemap/ServiceLinks";
+import { IndustryLinks } from "@/components/sitemap/IndustryLinks";
+import { LocationLinks } from "@/components/sitemap/LocationLinks";
+import { LocationBasedLinks } from "@/components/sitemap/LocationBasedLinks";
 
 interface Industry {
   name: string;
   slug: string;
 }
 
-interface Service {
-  name: string;
-  slug: string;
-}
-
-interface SitemapData {
-  industries: Industry[];
-  services: Service[];
-}
-
-// Core services data
-const coreServices = [
-  { name: "IT Support", slug: "it-support" },
-  { name: "Cybersecurity", slug: "cybersecurity" },
-  { name: "Cloud Solutions", slug: "cloud-solutions" },
-  { name: "Network Services", slug: "network-services" },
-  { name: "AI Automation", slug: "ai-automation" },
-  { name: "IT Infrastructure", slug: "it-infrastructure" },
-  { name: "Network Management", slug: "network-management" },
-  { name: "Backup & Recovery", slug: "backup-recovery" },
-  { name: "IT Consulting", slug: "it-consulting" },
-];
-
-// Location data
-const allLocations = [
-  { city: "Cleveland", state: "Ohio" },
-  { city: "Columbus", state: "Ohio" },
-  { city: "Cincinnati", state: "Ohio" },
-  { city: "Dayton", state: "Ohio" },
-  { city: "Toledo", state: "Ohio" },
-  { city: "Akron", state: "Ohio" },
-  { city: "Canton", state: "Ohio" },
-  { city: "Richmond", state: "Virginia" },
-  { city: "Virginia Beach", state: "Virginia" },
-  { city: "Norfolk", state: "Virginia" },
-  { city: "Chesapeake", state: "Virginia" },
-  { city: "Newport News", state: "Virginia" },
-  { city: "Alexandria", state: "Virginia" },
-  { city: "Hampton", state: "Virginia" },
-];
-
-// Get unique states from locations
-const states = [...new Set(allLocations.map(location => location.state))];
-
 const Sitemap = () => {
-  const [data, setData] = useState<SitemapData | null>(null);
+  const [data, setData] = useState<Industry[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // First, try to get data from cache
+        const { data: cacheData } = await supabase
+          .from('page_cache')
+          .select('content')
+          .eq('url', '/sitemap')
+          .single();
+
+        if (cacheData) {
+          setData(JSON.parse(cacheData.content));
+          setLoading(false);
+          return;
+        }
+
+        // If no cache, fetch from industries table
         const { data: industries, error: industriesError } = await supabase
           .from("industries")
           .select("name, slug");
 
         if (industriesError) throw industriesError;
 
-        setData({
-          industries,
-          services: coreServices,
-        });
+        // Cache the result
+        await supabase
+          .from('page_cache')
+          .upsert({
+            url: '/sitemap',
+            content: JSON.stringify(industries),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'url'
+          });
+
+        setData(industries);
       } catch (error) {
         console.error("Error fetching sitemap data:", error);
       } finally {
@@ -91,153 +73,11 @@ const Sitemap = () => {
         <h1 className="text-3xl font-bold mb-8">Sitemap</h1>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Main Pages */}
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Main Pages</h2>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/" className="text-blue-600 hover:underline">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/ai-services" className="text-blue-600 hover:underline">
-                  AI Services
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="text-blue-600 hover:underline">
-                  All Services
-                </Link>
-              </li>
-              <li>
-                <Link to="/industries" className="text-blue-600 hover:underline">
-                  All Industries
-                </Link>
-              </li>
-              <li>
-                <Link to="/locations" className="text-blue-600 hover:underline">
-                  All Locations
-                </Link>
-              </li>
-            </ul>
-          </section>
-
-          {/* Main Services */}
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Main Services</h2>
-            <ul className="space-y-2">
-              {coreServices.map((service) => (
-                <li key={service.slug}>
-                  <Link
-                    to={`/services/${service.slug}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {service.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Industries */}
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Industries</h2>
-            <ul className="space-y-2">
-              {data?.industries.map((industry) => (
-                <li key={industry.slug}>
-                  <Link
-                    to={`/industries/${industry.slug}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {industry.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* State Pages */}
-          <section>
-            <h2 className="text-xl font-semibold mb-4">State Pages</h2>
-            <ul className="space-y-2">
-              {states.map((state) => (
-                <li key={state}>
-                  <Link 
-                    to={`/locations/${state}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {state}
-                  </Link>
-                  <ul className="ml-4 mt-2 space-y-1">
-                    {allLocations
-                      .filter(location => location.state === state)
-                      .map(location => (
-                        <li key={`${location.state}-${location.city}`}>
-                          <Link 
-                            to={`/locations/${location.state}/${location.city}`}
-                            className="text-blue-600 hover:underline text-sm"
-                          >
-                            {location.city}
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Location-Based Services */}
-          <section className="md:col-span-2 lg:col-span-3">
-            <h2 className="text-xl font-semibold mb-4">Location-Based Services & Industries</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allLocations.map((location) => (
-                <div key={`${location.state}-${location.city}`} className="space-y-2">
-                  <h3 className="font-medium text-gray-700">
-                    <Link 
-                      to={`/locations/${location.state}/${location.city}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {location.city}, {location.state}
-                    </Link>
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Services</h4>
-                      <ul className="space-y-1">
-                        {coreServices.map((service) => (
-                          <li key={`${location.city}-${service.slug}`}>
-                            <Link 
-                              to={`/services/${service.slug}/${location.state}/${location.city}`}
-                              className="text-blue-600 hover:underline text-sm"
-                            >
-                              {service.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Industries</h4>
-                      <ul className="space-y-1">
-                        {data?.industries.map((industry) => (
-                          <li key={`${location.city}-${industry.slug}`}>
-                            <Link 
-                              to={`/industries/${industry.slug}/${location.state}/${location.city}`}
-                              className="text-blue-600 hover:underline text-sm"
-                            >
-                              {industry.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <MainLinks />
+          <ServiceLinks />
+          {data && <IndustryLinks industries={data} />}
+          <LocationLinks />
+          {data && <LocationBasedLinks industries={data} />}
         </div>
       </main>
       <Footer />
