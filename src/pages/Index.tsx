@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
@@ -6,7 +7,8 @@ import { SolutionSection } from "@/components/landing/SolutionSection";
 import { OutcomeSection } from "@/components/landing/OutcomeSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
-import { ServiceGrid } from "@/components/ServiceGrid";
+import { ServiceIconSection } from "@/components/landing/ServiceIconSection";
+import { TestimonialSection } from "@/components/landing/TestimonialSection";
 
 const Index = () => {
   useEffect(() => {
@@ -66,7 +68,8 @@ const Index = () => {
         <PainPointsSection />
         <OutcomeSection />
         <SolutionSection />
-        <ServiceGrid />
+        <TestimonialSection />
+        <ServiceIconSection />
         <ContactSection />
       </main>
       <Footer />

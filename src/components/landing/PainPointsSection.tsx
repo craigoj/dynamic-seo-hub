@@ -1,28 +1,33 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+
+import { Clock, ShieldX, TrendingDown } from "lucide-react";
 
 export const PainPointsSection = () => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-4">Does this sound familiar?</h2>
-        <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-          Many small businesses think IT and automation are too costly or complex. In reality, they're the key to scaling efficiently without breaking the bank.
-        </p>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold mb-4">Does this sound familiar?</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Many small businesses think IT and automation are too costly or complex. In reality, they're the key to scaling efficiently without breaking the bank.
+          </p>
+        </div>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            "Wasting hours on manual data entry while your competition moves ahead.",
-            "Struggling to keep your systems secure with limited IT expertise.",
-            "Missing out on growth opportunities because you're bogged down with inefficiencies."
-          ].map((pain, index) => (
-            <Card key={index} className="border-none shadow-lg">
-              <CardContent className="p-6">
-                <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-                <p className="text-gray-700">{pain}</p>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="bg-gray-50 p-8 rounded-xl">
+            <Clock className="h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-xl font-bold mb-3">Time Waste</h3>
+            <p className="text-gray-600">Wasting hours on manual data entry while your competition moves ahead.</p>
+          </div>
+          <div className="bg-gray-50 p-8 rounded-xl">
+            <ShieldX className="h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-xl font-bold mb-3">Security Concerns</h3>
+            <p className="text-gray-600">Struggling to keep your systems secure with limited IT expertise.</p>
+          </div>
+          <div className="bg-gray-50 p-8 rounded-xl">
+            <TrendingDown className="h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-xl font-bold mb-3">Missed Opportunities</h3>
+            <p className="text-gray-600">Missing out on growth opportunities because you're bogged down with inefficiencies.</p>
+          </div>
         </div>
       </div>
     </section>

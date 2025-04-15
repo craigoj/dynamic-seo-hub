@@ -1,140 +1,147 @@
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Briefcase, Factory, Mail, MapPin, Bot } from "lucide-react";
-import { Link } from "react-router-dom";
 
-const services = [
-  { title: "Cybersecurity", slug: "cybersecurity", description: "Protect your business with enterprise-grade security" },
-  { title: "Cloud Solutions", slug: "cloud-solutions", description: "Seamless cloud migration and management" },
-  { title: "IT Infrastructure", slug: "it-infrastructure", description: "Build and maintain robust IT systems" },
-  { title: "Network Management", slug: "network-management", description: "Ensure optimal network performance" },
-  { title: "Backup & Recovery", slug: "backup-recovery", description: "Protect your data with automated solutions" },
-  { title: "IT Consulting", slug: "it-consulting", description: "Strategic technology planning" }
-];
-
-const industries = [
-  { title: "Healthcare", slug: "healthcare-and-wellness", description: "HIPAA-compliant IT solutions" },
-  { title: "Finance", slug: "finance", description: "Secure financial technology solutions" },
-  { title: "Manufacturing", slug: "manufacturing-and-logistics", description: "Modern manufacturing IT solutions" },
-  { title: "Retail", slug: "retail-and-ecommerce", description: "Technology for modern retail" },
-  { title: "Professional Services", slug: "professional-services", description: "Secure document management solutions" },
-  { title: "Education", slug: "education-and-non-profits", description: "IT support for educational institutions" }
-];
+import { useNavigate } from "react-router-dom";
+import { Menu } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export const Header = () => {
+  const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const scrollToContact = () => {
+    const element = document.getElementById('contact-form');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <header className="w-full border-b bg-white">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold">
-            CTRL Tech
-          </Link>
+    <header className="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-20">
+          <div className="flex items-center">
+            <span 
+              onClick={() => navigate('/')} 
+              className="text-2xl font-bold text-blue-600 cursor-pointer"
+            >
+              CTRL Tech
+            </span>
+          </div>
           
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4" />
-                  IT Services
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[400px]">
-                    <div className="grid grid-cols-2 gap-4">
-                      {services.map((service) => (
-                        <Link 
-                          key={service.slug}
-                          to={`/services/${service.slug}`} 
-                          className="block p-3 hover:bg-slate-50 rounded-lg"
-                        >
-                          <div className="font-medium mb-1">{service.title}</div>
-                          <p className="text-sm text-muted-foreground">{service.description}</p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/ai-services" 
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  <Bot className="h-4 w-4" />
-                  AI Services
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="flex items-center gap-2">
-                  <Factory className="h-4 w-4" />
-                  Industries
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[400px]">
-                    <div className="grid grid-cols-2 gap-4">
-                      {industries.map((industry) => (
-                        <Link 
-                          key={industry.slug}
-                          to={`/industries/${industry.slug}`} 
-                          className="block p-3 hover:bg-slate-50 rounded-lg"
-                        >
-                          <div className="font-medium mb-1">{industry.title}</div>
-                          <p className="text-sm text-muted-foreground">{industry.description}</p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/locations" 
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Locations
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/about"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  About
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/contact"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  Contact
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/sitemap"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  Sitemap
-                </Link>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Link 
-                  to="/admin/login"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
-                >
-                  Admin Login
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          <nav className="hidden md:flex space-x-8">
+            <span 
+              onClick={() => navigate('/services')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              IT Services
+            </span>
+            <span 
+              onClick={() => navigate('/ai-services')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              AI Services
+            </span>
+            <span 
+              onClick={() => navigate('/industries')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              Industries
+            </span>
+            <span 
+              onClick={() => navigate('/locations')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              Locations
+            </span>
+            <span 
+              onClick={() => navigate('/about')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              About
+            </span>
+            <span 
+              onClick={() => navigate('/contact')} 
+              className="text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              Contact
+            </span>
+          </nav>
+          
+          <div className="hidden md:flex items-center space-x-4">
+            <span 
+              onClick={() => navigate('/admin/login')} 
+              className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer"
+            >
+              Admin Login
+            </span>
+            <Button 
+              onClick={scrollToContact}
+              className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700"
+            >
+              Get Started
+            </Button>
+          </div>
+          
+          <button 
+            className="md:hidden text-gray-600"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
+        
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 pb-6 border-t border-gray-100">
+            <nav className="flex flex-col space-y-4">
+              <span 
+                onClick={() => { navigate('/services'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                IT Services
+              </span>
+              <span 
+                onClick={() => { navigate('/ai-services'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                AI Services
+              </span>
+              <span 
+                onClick={() => { navigate('/industries'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                Industries
+              </span>
+              <span 
+                onClick={() => { navigate('/locations'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                Locations
+              </span>
+              <span 
+                onClick={() => { navigate('/about'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                About
+              </span>
+              <span 
+                onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                Contact
+              </span>
+              <span 
+                onClick={() => { navigate('/admin/login'); setMobileMenuOpen(false); }} 
+                className="text-gray-600 hover:text-blue-600 cursor-pointer"
+              >
+                Admin Login
+              </span>
+              <Button 
+                onClick={() => { scrollToContact(); setMobileMenuOpen(false); }}
+                className="bg-blue-600 text-white w-full py-2 rounded-full hover:bg-blue-700"
+              >
+                Get Started
+              </Button>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

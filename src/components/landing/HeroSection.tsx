@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { Shield, ArrowUpRight, Check } from "lucide-react";
 
 export const HeroSection = () => {
   const scrollToContact = () => {
@@ -8,44 +9,54 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 overflow-hidden">
+    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-50 to-white">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Automate Your Business, Simplify Your Life
-          </h1>
-          <p className="text-xl mb-8 text-blue-100">
-            Empowering small businesses through seamless integration of IT expertise and AI automation. Transform your operations and accelerate business growth with our innovative solutions.
-          </p>
-          <ul className="space-y-3 mb-8 text-blue-100">
-            <li className="flex items-start">
-              <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Save time by automating repetitive tasks like email workflows and data entry</span>
-            </li>
-            <li className="flex items-start">
-              <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Protect your data with robust cybersecurity and 24/7 monitoring</span>
-            </li>
-            <li className="flex items-start">
-              <ArrowRight className="h-6 w-6 mr-2 flex-shrink-0" />
-              <span>Streamline operations with IT support that scales as you grow</span>
-            </li>
-          </ul>
-          <Button 
-            size="lg" 
-            onClick={scrollToContact}
-            className="bg-white text-blue-600 hover:bg-blue-50"
-          >
-            Get Started Today
-          </Button>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
+            <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              Automate Your Business, Simplify Your Life
+            </h1>
+            <p className="text-xl text-gray-600">
+              Empowering small businesses through seamless integration of IT expertise and AI automation. Transform your operations and accelerate business growth with our innovative solutions.
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Check className="h-5 w-5 text-blue-600" />
+                <span className="text-gray-700">Save time by automating repetitive tasks</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Shield className="h-5 w-5 text-blue-600" />
+                <span className="text-gray-700">Protect your data with robust cybersecurity</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <ArrowUpRight className="h-5 w-5 text-blue-600" />
+                <span className="text-gray-700">Streamline operations with scalable IT support</span>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                onClick={scrollToContact}
+                className="bg-blue-600 text-white px-8 py-6 rounded-full hover:bg-blue-700"
+              >
+                Get Started Today
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => window.location.href = '/services'}
+                className="border-blue-600 text-blue-600 px-8 py-6 rounded-full hover:bg-blue-50"
+              >
+                Learn More
+              </Button>
+            </div>
+          </div>
+          <div className="relative">
+            <img 
+              className="rounded-2xl shadow-2xl"
+              src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800" 
+              alt="Modern tech workspace with futuristic displays"
+            />
+          </div>
         </div>
-      </div>
-      <div className="absolute right-0 top-0 w-1/2 h-full opacity-10">
-        <img 
-          src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800"
-          alt="Technology background"
-          className="w-full h-full object-cover"
-        />
       </div>
     </section>
   );
